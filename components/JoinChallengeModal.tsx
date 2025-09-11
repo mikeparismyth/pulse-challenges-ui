@@ -6,7 +6,7 @@ import { X, Wallet, CreditCard, Smartphone, Shield, Zap, Check } from 'lucide-re
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { availableWallets, isWalletConnected } from '@/lib/mockWalletData';
+import { availableWallets, getConnectedWallet, formatWalletAddress } from '@/lib/mockWalletData';
 
 interface JoinChallengeModalProps {
   isOpen: boolean;
@@ -59,16 +59,7 @@ export default function JoinChallengeModal({ isOpen, onClose, onWalletFlowStart,
   const organizerFeePercent = ((challenge.organizerFeeBps || 0) / 100).toFixed(0);
 
   // Get payment methods with real connection status
-  const paymentMethods = availableWallets.map(wallet => ({
-    ...wallet,
-    installed: isWalletConnected(wallet.id) || wallet.installed,
-    icon: wallet.id === 'abstract' ? Shield :
-          wallet.id === 'pulse' ? Zap :
-          wallet.id === 'metamask' ? Wallet :
-          wallet.id === 'walletconnect' ? Smartphone :
-          wallet.id === 'card' ? CreditCard :
-          Wallet
-  }));
+  const paymentMethods = availableWallets;
 
   const handlePaymentMethodSelect = (methodId: string) => {
     setSelectedPaymentMethod(methodId);
@@ -173,8 +164,14 @@ export default function JoinChallengeModal({ isOpen, onClose, onWalletFlowStart,
                   <h3 className="text-sm font-medium text-gray-300 mb-4">Select Payment Method</h3>
                   <div className="space-y-3">
                     {paymentMethods.map((method) => {
-                      const Icon = method.icon;
+                      const Icon = method.id === 'abstract' ? Shield :
+                                   method.id === 'pulse' ? Zap :
+                                   method.id === 'metamask' ? Wallet :
+                                   method.id === 'walletconnect' ? Smartphone :
+                                   method.id === 'card' ? CreditCard :
+                                   Wallet;
                       const isSelected = selectedPaymentMethod === method.id;
+                      const connectedWallet = getConnectedWallet(method.id);
                       
                       return (
                         <button
@@ -211,12 +208,17 @@ export default function JoinChallengeModal({ isOpen, onClose, onWalletFlowStart,
                                 )}
                               </div>
                               <p className="text-xs text-gray-400">{method.description}</p>
+                              {connectedWallet && (
+                                <p className="text-xs text-gray-500 font-mono">
+                                  {formatWalletAddress(connectedWallet.address)}
+                                </p>
+                              )}
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
-                            {method.installed && (
+                            {connectedWallet && (
                               <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
-                                {isWalletConnected(method.id) ? 'Connected' : 'Installed'}
+                                Connected
                               </Badge>
                             )}
                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
