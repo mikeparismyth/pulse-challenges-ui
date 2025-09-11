@@ -1,4 +1,4 @@
-'use client';
+
 
 import TournamentCard from '@/components/TournamentCard';
 import ChallengeFilters, { FilterState } from '@/components/ChallengeFilters';

@@ -1,4 +1,4 @@
-'use client';
+
 
 import { motion } from 'framer-motion';
 import { Settings, Wallet, Key, LogOut, Copy } from 'lucide-react';

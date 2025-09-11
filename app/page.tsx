@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import TournamentCard from '@/components/TournamentCard';
 import FeaturedChallengesCarousel from '@/components/FeaturedChallengesCarousel';

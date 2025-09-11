@@ -1,5 +1,5 @@
 // Authentication state management
-'use client';
+
 
 import { create } from 'zustand';
 import { ConnectedWallet, mockConnectedWallets } from './mockWalletData';
