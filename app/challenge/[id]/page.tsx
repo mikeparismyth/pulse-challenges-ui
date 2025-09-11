@@ -279,7 +279,14 @@ export default function ChallengePage() {
     console.log('✅ Wallet connection successful');
     setShowWalletFlow(false);
     setSelectedWalletType('');
-    toast.success('Successfully joined the tournament!');
+    
+    // Show success toast
+    toast.success('Wallet connected successfully!');
+    
+    // Reopen join modal after short delay to show newly connected wallet
+    setTimeout(() => {
+      setShowJoinModal(true);
+    }, 500);
   };
 
   // Mock leaderboard data

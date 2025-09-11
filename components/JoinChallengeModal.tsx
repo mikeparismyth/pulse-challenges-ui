@@ -24,12 +24,14 @@ interface JoinChallengeModalProps {
 export default function JoinChallengeModal({ isOpen, onClose, onWalletFlowStart, challenge }: JoinChallengeModalProps) {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [connectingWallet, setConnectingWallet] = useState<string>('');
 
   // Reset state when modal closes
   useEffect(() => {
     if (!isOpen) {
       setSelectedPaymentMethod('');
       setAcceptedTerms(false);
+      setConnectingWallet('');
     }
   }, [isOpen]);
 
@@ -76,6 +78,7 @@ export default function JoinChallengeModal({ isOpen, onClose, onWalletFlowStart,
 
   const handleWalletConnection = (walletType: string) => {
     console.log('🔗 Starting wallet connection for:', walletType);
+    setConnectingWallet(walletType);
     // Start wallet connection flow
     onWalletFlowStart(walletType);
   };
@@ -109,6 +112,7 @@ export default function JoinChallengeModal({ isOpen, onClose, onWalletFlowStart,
   const handleClose = () => {
     setSelectedPaymentMethod('');
     setAcceptedTerms(false);
+    setConnectingWallet('');
     onClose();
   };
 
@@ -251,13 +255,14 @@ export default function JoinChallengeModal({ isOpen, onClose, onWalletFlowStart,
                             ) : (
                               <Button
                                 size="sm"
-                                className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1"
+                                className="bg-[#30FFE6] hover:bg-[#30FFE6]/90 text-gray-900 text-xs px-3 py-1 font-medium disabled:opacity-50"
+                                disabled={connectingWallet === method.id}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleWalletConnection(method.id);
                                 }}
                               >
-                                Connect
+                                {connectingWallet === method.id ? 'Connecting...' : 'Connect'}
                               </Button>
                             )}
                           </div>
