@@ -104,17 +104,20 @@ export default function JoinChallengeModal({
       toast.error('Please select a payment method');
       return;
     }
-    if (!getConnectedWallet(selectedPaymentMethod)) {
+    
+    const connectedWallet = getConnectedWallet(selectedPaymentMethod);
+    if (!connectedWallet) {
       toast.error('Please connect your wallet first');
       return;
     }
+    
     if (!acceptedTerms) {
       toast.error('Please accept the terms and conditions');
       return;
     }
     
-    console.log('🔄 Setting wallet type to:', selectedPaymentMethod);
-    console.log('🔄 Setting showWalletFlow to true');
+    // Route to transaction signing for connected wallets
+    console.log('🔄 Routing to transaction signing for:', selectedPaymentMethod);
     onWalletFlowStart(selectedPaymentMethod);
     console.log('✅ handleJoinChallenge completed');
   };

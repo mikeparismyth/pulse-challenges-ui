@@ -202,64 +202,28 @@ export default function WalletConnectionModals({
 
   const renderEmbeddedWalletFlow = () => (
     <AnimatePresence mode="wait">
-      {step === 'login' && (
-        <motion.div
-          key="embedded-login"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          className="p-6 text-center"
+      {/* Pulse wallet is always connected when signed in - no creation flow needed */}
+      <motion.div
+        key="embedded-info"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        className="p-6 text-center"
+      >
+        <div className="w-16 h-16 bg-gradient-to-br from-[#8E1EFE] to-[#30FFE6] rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <Check className="w-8 h-8 text-white" />
+        </div>
+        <h2 className="text-2xl font-semibold text-white mb-2">Pulse Wallet Ready</h2>
+        <p className="text-gray-400 mb-8">
+          Your Pulse wallet is already connected and ready to use
+        </p>
+        <Button
+          onClick={() => onSuccess()}
+          className="w-full bg-gradient-to-r from-[#8E1EFE] to-[#30FFE6] hover:opacity-90 text-white py-3 rounded-lg font-medium transition-opacity"
         >
-          <div className="w-16 h-16 bg-gradient-to-br from-[#8E1EFE] to-[#30FFE6] rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Wallet className="w-8 h-8 text-white" />
-          </div>
-          <h2 className="text-2xl font-semibold text-white mb-2">Create Pulse Wallet</h2>
-          <p className="text-gray-400 mb-8">
-            We'll create a secure wallet for you automatically
-          </p>
-          <Button
-            onClick={handleSubmit}
-            className="w-full bg-gradient-to-r from-[#8E1EFE] to-[#30FFE6] hover:opacity-90 text-white py-3 rounded-lg font-medium transition-opacity"
-          >
-            Create Wallet
-          </Button>
-        </motion.div>
-      )}
-
-      {step === 'loading' && (
-        <motion.div
-          key="embedded-loading"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          className="p-6 text-center"
-        >
-          <div className="w-16 h-16 bg-gradient-to-br from-[#8E1EFE] to-[#30FFE6] rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Loader2 className="w-8 h-8 text-white animate-spin" />
-          </div>
-          <h2 className="text-xl font-semibold text-white mb-2">Creating your Pulse Wallet...</h2>
-          <p className="text-gray-400">Generating secure keys and setting up your wallet</p>
-        </motion.div>
-      )}
-
-      {step === 'success' && (
-        <motion.div
-          key="embedded-success"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          className="p-6 text-center"
-        >
-          <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Check className="w-8 h-8 text-white" />
-          </div>
-          <h2 className="text-xl font-semibold text-white mb-2">Pulse Wallet Created!</h2>
-          <p className="text-gray-400 mb-4">Wallet address: 0x9876...4321</p>
-          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors">
-            Continue to Transaction
-          </Button>
-        </motion.div>
-      )}
+          Continue
+        </Button>
+      </motion.div>
     </AnimatePresence>
   );
 

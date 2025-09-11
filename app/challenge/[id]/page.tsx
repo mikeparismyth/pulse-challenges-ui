@@ -16,6 +16,7 @@ import { Trophy, Users, Clock, ArrowLeft, Crown, Medal, Award, Gamepad2, Zap } f
 import Link from 'next/link';
 import JoinChallengeModal from '@/components/JoinChallengeModal';
 import WalletConnectionModals from '@/components/WalletConnectionModals';
+import TransactionSigningModals from '@/components/TransactionSigningModals';
 import PrivySignInModal from '@/components/auth/PrivySignInModal';
 
 export default function ChallengePage() {
@@ -27,6 +28,7 @@ export default function ChallengePage() {
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [hasJoined, setHasJoined] = useState(false);
   const [showWalletFlow, setShowWalletFlow] = useState(false);
+  const [showTransactionFlow, setShowTransactionFlow] = useState(false);
   const [selectedWalletType, setSelectedWalletType] = useState<string>('');
 
   // Mock tournament data - in real app this would come from API
@@ -280,6 +282,7 @@ export default function ChallengePage() {
   const handleWalletSuccess = () => {
     console.log('✅ Wallet connection successful');
     setShowWalletFlow(false);
+    setShowTransactionFlow(false);
     setSelectedWalletType('');
     
     // Reopen join modal after short delay to show newly connected wallet
@@ -593,11 +596,19 @@ export default function ChallengePage() {
         }}
         onWalletFlowStart={(walletType: string) => {
           console.log('🚀 Starting wallet flow for:', walletType);
+          const connectedWallet = getConnectedWallet(walletType);
           setSelectedWalletType(walletType);
           setShowJoinModal(false);
-          // Use setTimeout to ensure join modal closes before wallet modal opens
+          
+          // Route to appropriate flow based on wallet connection status
           setTimeout(() => {
-            setShowWalletFlow(true);
+            if (connectedWallet) {
+              console.log('✅ Wallet connected, showing transaction flow');
+              setShowTransactionFlow(true);
+            } else {
+              console.log('🔗 Wallet not connected, showing connection flow');
+              setShowWalletFlow(true);
+            }
           }, 100);
         }}
       />
@@ -613,6 +624,23 @@ export default function ChallengePage() {
         }}
         onSuccess={handleWalletSuccess}
         onConnect={connectWallet}
+        challenge={{
+          title: tournament.title,
+          entryFee: tournament.entryFee || '0 MYTH'
+        }}
+      />
+
+      {/* Transaction Signing Modals */}
+      <TransactionSigningModals
+        isOpen={showTransactionFlow}
+        walletType={selectedWalletType}
+        onClose={() => {
+          console.log('🔄 Closing transaction modal');
+          setShowTransactionFlow(false);
+          setSelectedWalletType('');
+        }}
+        onSuccess={handleWalletSuccess}
+        connectedWallet={getConnectedWallet(selectedWalletType)!}
         challenge={{
           title: tournament.title,
           entryFee: tournament.entryFee || '0 MYTH'
