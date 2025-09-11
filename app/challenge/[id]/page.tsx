@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth';
 import { useWalletConnections } from '@/lib/useWalletConnections';
+import { useWalletConnections } from '@/lib/useWalletConnections';
 import { TokenDisplay } from '@/components/ui/TokenDisplay';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { CountdownTimer } from '@/components/ui/CountdownTimer';
@@ -610,6 +611,7 @@ export default function ChallengePage() {
           setSelectedWalletType('');
         }}
         onSuccess={handleWalletSuccess}
+        onConnect={connectWallet}
         onConnect={connectWallet}
         challenge={{
           title: tournament.title,
