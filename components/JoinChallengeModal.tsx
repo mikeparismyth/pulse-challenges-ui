@@ -6,7 +6,8 @@ import { X, Wallet, CreditCard, Smartphone, Shield, Zap, Check } from 'lucide-re
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { availableWallets, getConnectedWallet, formatWalletAddress } from '@/lib/mockWalletData';
+import { availableWallets } from '@/lib/mockWalletData';
+import { useWalletConnections } from '@/lib/useWalletConnections';
 
 interface JoinChallengeModalProps {
   isOpen: boolean;
@@ -25,6 +26,9 @@ export default function JoinChallengeModal({ isOpen, onClose, onWalletFlowStart,
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [connectingWallet, setConnectingWallet] = useState<string>('');
+
+  // Use wallet connections hook
+  const { getConnectedWallet, formatWalletAddress } = useWalletConnections();
 
   // Reset state when modal closes
   useEffect(() => {

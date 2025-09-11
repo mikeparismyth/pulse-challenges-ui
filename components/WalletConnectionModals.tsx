@@ -11,6 +11,7 @@ interface WalletConnectionModalsProps {
   walletType: string;
   onClose: () => void;
   onSuccess: () => void;
+  onConnect?: (walletType: string) => Promise<void>;
   challenge: {
     title: string;
     entryFee: string;
@@ -22,6 +23,7 @@ export default function WalletConnectionModals({
   walletType, 
   onClose, 
   onSuccess,
+  onConnect,
   challenge 
 }: WalletConnectionModalsProps) {
   const [step, setStep] = useState<'login' | 'loading' | 'success'>('login');
@@ -47,17 +49,28 @@ export default function WalletConnectionModals({
     setIsLoading(true);
     setStep('loading');
     
-    // Simulate connection process
-    setTimeout(() => {
+    try {
+      // Use real connection function if provided
+      if (onConnect) {
+        await onConnect(walletType);
+      } else {
+        // Fallback to simulation
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+      
       setStep('success');
       setIsLoading(false);
       
-      // Auto close and show success after 2 seconds
+      // Auto close and show success after 1.5 seconds
       setTimeout(() => {
         onSuccess();
         toast.success('Wallet connected successfully!');
-      }, 2000);
-    }, 2000);
+      }, 1500);
+    } catch (error) {
+      setIsLoading(false);
+      setStep('login');
+      toast.error('Failed to connect wallet. Please try again.');
+    }
   };
 
   const handleGoogleLogin = () => {

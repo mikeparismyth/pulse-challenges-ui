@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth';
+import { useWalletConnections } from '@/lib/useWalletConnections';
 import { TokenDisplay } from '@/components/ui/TokenDisplay';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { CountdownTimer } from '@/components/ui/CountdownTimer';
@@ -21,6 +22,7 @@ export default function ChallengePage() {
   const params = useParams();
   const challengeId = params.id as string;
   const { isAuthenticated } = useAuth();
+  const { connectWallet } = useWalletConnections();
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [hasJoined, setHasJoined] = useState(false);
@@ -279,9 +281,6 @@ export default function ChallengePage() {
     console.log('✅ Wallet connection successful');
     setShowWalletFlow(false);
     setSelectedWalletType('');
-    
-    // Show success toast
-    toast.success('Wallet connected successfully!');
     
     // Reopen join modal after short delay to show newly connected wallet
     setTimeout(() => {
@@ -611,6 +610,7 @@ export default function ChallengePage() {
           setSelectedWalletType('');
         }}
         onSuccess={handleWalletSuccess}
+        onConnect={connectWallet}
         challenge={{
           title: tournament.title,
           entryFee: tournament.entryFee || '0 MYTH'

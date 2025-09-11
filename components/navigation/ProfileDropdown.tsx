@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { Settings, Wallet, Key, LogOut, Copy } from 'lucide-react';
 import { User } from '@/lib/auth';
-import { formatWalletAddress } from '@/lib/mockWalletData';
+import { useWalletConnections } from '@/lib/useWalletConnections';
 
 interface ProfileDropdownProps {
   user: User;
@@ -12,6 +12,8 @@ interface ProfileDropdownProps {
 }
 
 export default function ProfileDropdown({ user, onClose, onSignOut }: ProfileDropdownProps) {
+  const { formatWalletAddress } = useWalletConnections();
+  
   const copyWalletAddress = () => {
     const primaryWallet = user.connectedWallets.find(w => w.id === 'pulse') || user.connectedWallets[0];
     if (primaryWallet) {
