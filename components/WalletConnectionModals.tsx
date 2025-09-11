@@ -5,13 +5,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Loader2, Check, Shield, Wallet, CreditCard, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { ConnectedWallet } from '@/lib/mockWalletData';
 
 interface WalletConnectionModalsProps {
   isOpen: boolean;
   walletType: string;
   onClose: () => void;
   onSuccess: () => void;
-  onConnect?: (walletType: string) => Promise<void>;
+  onConnect?: (walletType: string) => Promise<ConnectedWallet>;
   challenge: {
     title: string;
     entryFee: string;
