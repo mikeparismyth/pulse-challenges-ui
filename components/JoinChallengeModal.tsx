@@ -157,7 +157,7 @@ export default function JoinChallengeModal({ isOpen, onClose, onWalletFlowStart,
                       <span className="text-base font-semibold text-[#30FFE6]">
                         {entryInfo.amount} {entryInfo.symbol} + gas (~${totalCostUsd.toFixed(2)})
                       </span>
-                  const Icon = method.icon as any;
+                    </div>
                   </div>
                   
                   {/* Fee Disclosure */}
