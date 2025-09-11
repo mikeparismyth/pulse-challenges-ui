@@ -22,7 +22,7 @@ export default function ChallengePage() {
   const params = useParams();
   const challengeId = params.id as string;
   const { isAuthenticated } = useAuth();
-  const { connectWallet } = useWalletConnections();
+  const { connectWallet, getConnectedWallet, formatWalletAddress } = useWalletConnections();
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [hasJoined, setHasJoined] = useState(false);
@@ -582,6 +582,8 @@ export default function ChallengePage() {
           console.log('🔄 Closing join modal');
           setShowJoinModal(false);
         }}
+        getConnectedWallet={getConnectedWallet}
+        formatWalletAddress={formatWalletAddress}
         challenge={{
           title: tournament.title,
           entryFee: tournament.entryFee || '0 MYTH',

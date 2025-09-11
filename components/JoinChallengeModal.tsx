@@ -7,12 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { availableWallets } from '@/lib/mockWalletData';
-import { useWalletConnections } from '@/lib/useWalletConnections';
+import { ConnectedWallet } from '@/lib/mockWalletData';
 
 interface JoinChallengeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onWalletFlowStart: (walletType: string) => void;
+  getConnectedWallet: (walletId: string) => ConnectedWallet | undefined;
+  formatWalletAddress: (address: string) => string;
   challenge: {
     title: string;
     entryFee: string;
@@ -22,13 +24,17 @@ interface JoinChallengeModalProps {
   };
 }
 
-export default function JoinChallengeModal({ isOpen, onClose, onWalletFlowStart, challenge }: JoinChallengeModalProps) {
+export default function JoinChallengeModal({ 
+  isOpen, 
+  onClose, 
+  onWalletFlowStart, 
+  getConnectedWallet,
+  formatWalletAddress,
+  challenge 
+}: JoinChallengeModalProps) {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [connectingWallet, setConnectingWallet] = useState<string>('');
-
-  // Use wallet connections hook
-  const { getConnectedWallet, formatWalletAddress } = useWalletConnections();
 
   // Reset state when modal closes
   useEffect(() => {
