@@ -1,4 +1,4 @@
-
+'use client';
 
 import { motion } from 'framer-motion';
 import { X, Trophy, Users, Clock, Zap } from 'lucide-react';

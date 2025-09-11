@@ -1,4 +1,4 @@
-
+'use client';
 
 import { Plus, Zap, Users, Trophy, Settings, Calendar } from 'lucide-react';
 
