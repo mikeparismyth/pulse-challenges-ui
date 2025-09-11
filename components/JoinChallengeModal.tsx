@@ -6,7 +6,7 @@ import { X, Wallet, CreditCard, Smartphone, Shield, Zap, Check } from 'lucide-re
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import WalletConnectionModals from './WalletConnectionModals';
+import { availableWallets, isWalletConnected } from '@/lib/mockWalletData';
 
 interface JoinChallengeModalProps {
   isOpen: boolean;
@@ -58,57 +58,17 @@ export default function JoinChallengeModal({ isOpen, onClose, onWalletFlowStart,
   const developerFeePercent = ((challenge.developerFeeBps || 800) / 100).toFixed(0);
   const organizerFeePercent = ((challenge.organizerFeeBps || 0) / 100).toFixed(0);
 
-  const paymentMethods = [
-    {
-      id: 'abstract',
-      name: 'Abstract Wallet',
-      description: 'Sign with Abstract',
-      icon: Shield,
-      recommended: true,
-      installed: false
-    },
-    {
-      id: 'pulse',
-      name: 'Pulse Wallet',
-      description: 'Use Pulse Wallet',
-      icon: Zap,
-      recommended: false,
-      installed: true,
-      default: true
-    },
-    {
-      id: 'metamask',
-      name: 'MetaMask',
-      description: 'Connect MetaMask',
-      icon: Wallet,
-      recommended: false,
-      installed: true
-    },
-    {
-      id: 'walletconnect',
-      name: 'WalletConnect',
-      description: 'WalletConnect',
-      icon: Smartphone,
-      recommended: false,
-      installed: false
-    },
-    {
-      id: 'coinbase',
-      name: 'Coinbase Wallet',
-      description: 'Coinbase Wallet',
-      icon: Wallet,
-      recommended: false,
-      installed: false
-    },
-    {
-      id: 'card',
-      name: 'Credit/Debit Card',
-      description: 'Buy with Card',
-      icon: CreditCard,
-      recommended: false,
-      installed: false
-    }
-  ];
+  // Get payment methods with real connection status
+  const paymentMethods = availableWallets.map(wallet => ({
+    ...wallet,
+    installed: isWalletConnected(wallet.id) || wallet.installed,
+    icon: wallet.id === 'abstract' ? Shield :
+          wallet.id === 'pulse' ? Zap :
+          wallet.id === 'metamask' ? Wallet :
+          wallet.id === 'walletconnect' ? Smartphone :
+          wallet.id === 'card' ? CreditCard :
+          Wallet
+  }));
 
   const handlePaymentMethodSelect = (methodId: string) => {
     setSelectedPaymentMethod(methodId);
@@ -197,7 +157,7 @@ export default function JoinChallengeModal({ isOpen, onClose, onWalletFlowStart,
                       <span className="text-base font-semibold text-[#30FFE6]">
                         {entryInfo.amount} {entryInfo.symbol} + gas (~${totalCostUsd.toFixed(2)})
                       </span>
-                    </div>
+                  const Icon = method.icon as any;
                   </div>
                   
                   {/* Fee Disclosure */}
@@ -256,7 +216,7 @@ export default function JoinChallengeModal({ isOpen, onClose, onWalletFlowStart,
                           <div className="flex items-center space-x-2">
                             {method.installed && (
                               <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
-                                Installed
+                                {isWalletConnected(method.id) ? 'Connected' : 'Installed'}
                               </Badge>
                             )}
                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${

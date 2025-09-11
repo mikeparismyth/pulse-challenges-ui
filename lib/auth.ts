@@ -2,13 +2,18 @@
 'use client';
 
 import { create } from 'zustand';
+import { ConnectedWallet, mockConnectedWallets } from './mockWalletData';
 
 export interface User {
   id: string;
   username: string;
   email: string;
-  walletAddress: string;
   avatar?: string;
+  connectedWallets: ConnectedWallet[];
+  createdAt: string;
+  level: number;
+  xp: number;
+  totalEarnings: string;
 }
 
 interface AuthState {
@@ -27,9 +32,13 @@ export const useAuth = create<AuthState>((set) => ({
 
 // Mock user data for demonstration
 export const mockUser: User = {
-  id: '1',
-  username: 'ProGamer2024',
-  email: 'bitbo.bagz@shire.io',
-  walletAddress: '0x1234...5678',
-  avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100'
+  id: 'user_123',
+  username: 'GameMaster2024',
+  email: 'gamer@example.com',
+  avatar: null,
+  connectedWallets: mockConnectedWallets,
+  createdAt: '2024-01-15T10:30:00Z',
+  level: 12,
+  xp: 2450,
+  totalEarnings: '1,250 MYTH'
 };

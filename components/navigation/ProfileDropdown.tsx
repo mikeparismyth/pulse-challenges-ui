@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Settings, Wallet, Key, LogOut, Copy } from 'lucide-react';
 import { User } from '@/lib/auth';
+import { formatWalletAddress } from '@/lib/mockWalletData';
 
 interface ProfileDropdownProps {
   user: User;
@@ -12,8 +13,11 @@ interface ProfileDropdownProps {
 
 export default function ProfileDropdown({ user, onClose, onSignOut }: ProfileDropdownProps) {
   const copyWalletAddress = () => {
-    navigator.clipboard.writeText('0x1234567890123456789012345678901234567890');
-    // In real app, show toast notification
+    const primaryWallet = user.connectedWallets.find(w => w.id === 'pulse') || user.connectedWallets[0];
+    if (primaryWallet) {
+      navigator.clipboard.writeText(primaryWallet.address);
+      // In real app, show toast notification
+    }
   };
 
   const menuItems = [
@@ -93,25 +97,33 @@ export default function ProfileDropdown({ user, onClose, onSignOut }: ProfileDro
           
           {/* Wallet Address */}
           <div className="mt-3 p-3 bg-gray-800/50 rounded-lg border border-gray-700/30">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-gray-400 text-xs mb-1">Your wallet</div>
-                <div className="text-white text-sm font-mono">
-                  {user.walletAddress}
+            {user.connectedWallets.length > 0 ? (
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-gray-400 text-xs mb-1">Primary wallet</div>
+                  <div className="text-white text-sm font-mono">
+                    {formatWalletAddress(user.connectedWallets[0].address)}
+                  </div>
                 </div>
+                <motion.button
+                  onClick={copyWalletAddress}
+                  className="p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-md transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Copy className="w-4 h-4" />
+                </motion.button>
               </div>
-              <motion.button
-                onClick={copyWalletAddress}
-                className="p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-md transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Copy className="w-4 h-4" />
-              </motion.button>
-            </div>
-            <div className="text-right text-xs text-gray-500 mt-1">
-              0.063 ETH
-            </div>
+            ) : (
+              <div className="text-center text-gray-400 text-sm">
+                No wallets connected
+              </div>
+            )}
+            {user.connectedWallets.length > 0 && user.connectedWallets[0].balance && (
+              <div className="text-right text-xs text-gray-500 mt-1">
+                {user.connectedWallets[0].balance.eth} ETH (${user.connectedWallets[0].balance.usd})
+              </div>
+            )}
           </div>
         </div>
 
