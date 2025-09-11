@@ -35,7 +35,7 @@ export const mockUser: User = {
   id: 'user_123',
   username: 'GameMaster2024',
   email: 'gamer@example.com',
-  avatar: null,
+  avatar: undefined,
   connectedWallets: mockConnectedWallets,
   createdAt: '2024-01-15T10:30:00Z',
   level: 12,
