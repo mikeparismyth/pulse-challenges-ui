@@ -300,13 +300,13 @@ export default function JoinChallengeModal({
                     </button>
                     <div className="text-sm text-gray-400">
                       I agree to the{' '}
-                      <button className="text-[#30FFE6] hover:underline">
+                      <span className="text-[#30FFE6] hover:underline cursor-pointer">
                         Terms of Service
-                      </button>{' '}
+                      </span>{' '}
                       and{' '}
-                      <button className="text-[#30FFE6] hover:underline">
+                      <span className="text-[#30FFE6] hover:underline cursor-pointer">
                         Privacy Policy
-                      </button>
+                      </span>
                     </div>
                   </div>
 
