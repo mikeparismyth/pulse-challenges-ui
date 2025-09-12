@@ -15,34 +15,104 @@ export interface ConnectedWallet {
   };
 }
 
-export const mockConnectedWallets: ConnectedWallet[] = [
-  {
+// Dynamic connected wallets based on signin method
+export function getConnectedWalletsForSigninMethod(signinMethod: string): ConnectedWallet[] {
+  const baseWallets: ConnectedWallet[] = [];
+  
+  // Pulse wallet is ALWAYS connected for signed-in users
+  const pulseWallet: ConnectedWallet = {
     id: 'pulse',
     name: 'Pulse Wallet',
     address: '0x742d35Cc6134C0532925a3b8D4C4405fAE4b38EF',
     type: 'embedded',
-    isConnected: true, // Always connected for signed-in users
+    isConnected: true,
     icon: '⚡',
     balance: {
       eth: '0.063',
       usd: '156.42'
     }
-  },
-  {
-    id: 'metamask',
-    name: 'MetaMask',
-    address: '0x1234567890123456789012345678901234567890',
-    type: 'external',
-    chainId: 1,
-    isConnected: true,
-    icon: '🦊',
-    balance: {
-      eth: '0.125',
-      usd: '310.25'
-    }
+  };
+  
+  baseWallets.push(pulseWallet);
+  
+  // Add wallet-specific connections based on signin method
+  if (signinMethod === 'metamask') {
+    baseWallets.push({
+      id: 'metamask',
+      name: 'MetaMask',
+      address: '0x1234567890123456789012345678901234567890',
+      type: 'external',
+      chainId: 1,
+      isConnected: true,
+      icon: '🦊',
+      balance: {
+        eth: '0.125',
+        usd: '310.25'
+      }
+    });
+  } else if (signinMethod === 'coinbase') {
+    baseWallets.push({
+      id: 'coinbase',
+      name: 'Coinbase Wallet',
+      address: '0x9876543210987654321098765432109876543210',
+      type: 'external',
+      chainId: 1,
+      isConnected: true,
+      icon: '🔵',
+      balance: {
+        eth: '0.089',
+        usd: '220.15'
+      }
+    });
+  } else if (signinMethod === 'phantom') {
+    baseWallets.push({
+      id: 'phantom',
+      name: 'Phantom',
+      address: 'PhantomWallet123456789012345678901234567890',
+      type: 'external',
+      isConnected: true,
+      icon: '👻',
+      balance: {
+        eth: '2.5 SOL',
+        usd: '425.75'
+      }
+    });
+  } else if (signinMethod === 'rainbow') {
+    baseWallets.push({
+      id: 'rainbow',
+      name: 'Rainbow',
+      address: '0x5555666677778888999900001111222233334444',
+      type: 'external',
+      chainId: 1,
+      isConnected: true,
+      icon: '🌈',
+      balance: {
+        eth: '0.156',
+        usd: '387.20'
+      }
+    });
+  } else if (signinMethod === 'walletconnect') {
+    baseWallets.push({
+      id: 'walletconnect',
+      name: 'WalletConnect',
+      address: '0x7777888899990000111122223333444455556666',
+      type: 'external',
+      chainId: 1,
+      isConnected: true,
+      icon: '📱',
+      balance: {
+        eth: '0.078',
+        usd: '193.45'
+      }
+    });
   }
-  // abstract, walletconnect, coinbase not connected by default
-];
+  // For email/SMS/social signin: only Pulse wallet is connected
+  
+  return baseWallets;
+}
+
+// Keep existing mockConnectedWallets as default fallback
+export const mockConnectedWallets: ConnectedWallet[] = getConnectedWalletsForSigninMethod('email');
 
 export const availableWallets = [
   {
@@ -110,8 +180,20 @@ export const getConnectedWallet = (walletId: string): ConnectedWallet | undefine
   return mockConnectedWallets.find(wallet => wallet.id === walletId && wallet.isConnected);
 };
 
+// Dynamic version that works with signin method
+export const getConnectedWalletDynamic = (walletId: string, signinMethod: string): ConnectedWallet | undefined => {
+  const connectedWallets = getConnectedWalletsForSigninMethod(signinMethod);
+  return connectedWallets.find(wallet => wallet.id === walletId && wallet.isConnected);
+};
+
 export const isWalletConnected = (walletId: string): boolean => {
   return mockConnectedWallets.some(wallet => wallet.id === walletId && wallet.isConnected);
+};
+
+// Dynamic version for signin method
+export const isWalletConnectedDynamic = (walletId: string, signinMethod: string): boolean => {
+  const connectedWallets = getConnectedWalletsForSigninMethod(signinMethod);
+  return connectedWallets.some(wallet => wallet.id === walletId && wallet.isConnected);
 };
 
 export const getWalletInfo = (walletId: string) => {
