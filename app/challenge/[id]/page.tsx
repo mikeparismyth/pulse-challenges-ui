@@ -279,7 +279,6 @@ export default function ChallengePage() {
     }, 100);
   };
 
-  const handleWalletSuccess = () => {
   const handleWalletSuccess = (completedFlow?: 'connection' | 'transaction') => {
     console.log('✅ Wallet flow completed:', completedFlow);
     
