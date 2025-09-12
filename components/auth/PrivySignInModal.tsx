@@ -128,7 +128,7 @@ export default function PrivySignInModal({ isOpen, onClose, onSuccess }: PrivySi
     setTimeout(() => {
       setStep('success');
       setTimeout(() => {
-        login(mockUser, wallet.toLowerCase());
+        login(mockUser, mapToSigninMethod(wallet));
         onSuccess();
         toast.success(`Successfully connected ${wallet}!`);
       }, 1500);
