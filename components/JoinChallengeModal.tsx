@@ -266,17 +266,21 @@ export default function JoinChallengeModal({
                                 </div>
                               </>
                             ) : (
-                              <Button
-                                size="sm"
-                                className="bg-[#30FFE6] hover:bg-[#30FFE6]/90 text-gray-900 text-xs px-3 py-1 font-medium disabled:opacity-50"
-                                disabled={connectingWallet === method.id}
+                              <div
+                                className={`inline-flex items-center justify-center px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                                  connectingWallet === method.id 
+                                    ? 'bg-gray-500 text-gray-300 cursor-not-allowed' 
+                                    : 'bg-[#30FFE6] hover:bg-[#30FFE6]/90 text-gray-900 cursor-pointer'
+                                }`}
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleWalletConnection(method.id);
+                                  if (connectingWallet !== method.id) {
+                                    handleWalletConnection(method.id);
+                                  }
                                 }}
                               >
                                 {connectingWallet === method.id ? 'Connecting...' : 'Connect'}
-                              </Button>
+                              </div>
                             )}
                           </div>
                         </button>
