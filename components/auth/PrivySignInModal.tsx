@@ -21,6 +21,7 @@ export default function PrivySignInModal({ isOpen, onClose, onSuccess }: PrivySi
   const [phone, setPhone] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentOTPMethod, setCurrentOTPMethod] = useState<'email' | 'sms'>('email');
   const { login } = useAuth();
 
   // Reset state when modal opens
@@ -31,6 +32,7 @@ export default function PrivySignInModal({ isOpen, onClose, onSuccess }: PrivySi
       setPhone('');
       setOtpCode('');
       setIsLoading(false);
+      setCurrentOTPMethod('email');
     }
   }, [isOpen]);
 
@@ -38,6 +40,7 @@ export default function PrivySignInModal({ isOpen, onClose, onSuccess }: PrivySi
     e.preventDefault();
     if (!email) return;
     
+    setCurrentOTPMethod('email');
     setIsLoading(true);
     setStep('loading');
     
@@ -56,6 +59,7 @@ export default function PrivySignInModal({ isOpen, onClose, onSuccess }: PrivySi
     e.preventDefault();
     if (!phone) return;
     
+    setCurrentOTPMethod('sms');
     setIsLoading(true);
     setStep('loading');
     
@@ -77,8 +81,7 @@ export default function PrivySignInModal({ isOpen, onClose, onSuccess }: PrivySi
     setTimeout(() => {
       setStep('success');
       setTimeout(() => {
-        const method = step === 'email-otp' ? 'email' : 'sms';
-        login(mockUser, method);
+        login(mockUser, currentOTPMethod);
         onSuccess();
         toast.success('Successfully signed in!');
       }, 1500);
