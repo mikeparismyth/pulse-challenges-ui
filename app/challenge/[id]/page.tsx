@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth';
 import { joinChallenge, hasUserJoinedChallenge } from '@/lib/mockChallengeParticipation';
 import { useWalletConnections } from '@/lib/useWalletConnections';
+import { getConnectedWalletDynamic } from '@/lib/mockWalletData';
 import { TokenDisplay } from '@/components/ui/TokenDisplay';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { CountdownTimer } from '@/components/ui/CountdownTimer';
@@ -612,7 +613,6 @@ export default function ChallengePage() {
           console.log('🔄 Closing join modal');
           setShowJoinModal(false);
         }}
-        getConnectedWallet={getConnectedWallet}
         formatWalletAddress={formatWalletAddress}
         getConnectedWallet={(walletId: string) => 
           getConnectedWalletDynamic(walletId, user?.signinMethod || 'email')
