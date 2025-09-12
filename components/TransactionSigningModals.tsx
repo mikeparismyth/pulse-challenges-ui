@@ -290,6 +290,150 @@ export default function WalletConnectionModals({
     </AnimatePresence>
   );
 
+  const renderWalletFlow = () => {
+    switch (walletType) {
+      case 'abstract':
+        return renderAbstractWalletFlow();
+      case 'pulse':
+        return renderEmbeddedWalletFlow();
+      case 'metamask':
+          >
+      case 'coinbase':
+        return renderCoinbaseWalletFlow();
+      case 'walletconnect':
+        return renderWalletConnectFlow();
+            Connect Coinbase Wallet
+          </Button>
+        </motion.div>
+      )}
+
+      {step === 'loading' && (
+        <motion.div
+          key="coinbase-loading"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="p-6 text-center"
+        >
+          <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Loader2 className="w-8 h-8 text-white animate-spin" />
+          </div>
+          <h2 className="text-xl font-semibold text-white mb-2">Waiting for approval...</h2>
+          <p className="text-gray-400">Please approve the connection in your Coinbase Wallet</p>
+        </motion.div>
+      )}
+
+      {step === 'success' && (
+        <motion.div
+          key="coinbase-success"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="p-6 text-center"
+        >
+          <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Check className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-xl font-semibold text-white mb-2">Coinbase Wallet Connected</h2>
+          <p className="text-gray-400 mb-4">Connected address: 0x9876...5432</p>
+          <div className="text-sm text-gray-500">Proceeding to tournament...</div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
+  const renderWalletConnectFlow = () => (
+    <AnimatePresence mode="wait">
+      {step === 'login' && (
+        <motion.div
+          key="walletconnect-login"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="p-6 text-center"
+        >
+          <div className="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Smartphone className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-2xl font-semibold text-white mb-2">Connect via WalletConnect</h2>
+          <p className="text-gray-400 mb-8">
+            Connect your mobile wallet using WalletConnect
+          </p>
+          <Button
+            onClick={handleExternalWallet}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium transition-colors"
+          >
+            Connect Mobile Wallet
+          </Button>
+        </motion.div>
+      )}
+
+      {step === 'loading' && (
+        <motion.div
+          key="walletconnect-loading"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="p-6 text-center"
+        >
+          <div className="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Loader2 className="w-8 h-8 text-white animate-spin" />
+          </div>
+          <h2 className="text-xl font-semibold text-white mb-2">Connecting to mobile wallet...</h2>
+          <p className="text-gray-400">Please approve the connection on your mobile device</p>
+        </motion.div>
+      )}
+
+      {step === 'success' && (
+        <motion.div
+          key="walletconnect-success"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="p-6 text-center"
+        >
+          <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Check className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-xl font-semibold text-white mb-2">WalletConnect Connected</h2>
+          <p className="text-gray-400 mb-4">Connected mobile wallet successfully</p>
+          <div className="text-sm text-gray-500">Proceeding to tournament...</div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
+      case 'coinbase':
+        return renderCoinbaseWalletFlow();
+      case 'walletconnect':
+        return renderWalletConnectFlow();
+      case 'coinbase':
+        return renderCoinbaseWalletFlow();
+      case 'walletconnect':
+        return renderWalletConnectFlow();
+      case 'coinbase':
+        return renderCoinbaseWalletFlow();
+      case 'walletconnect':
+        return renderWalletConnectFlow();
+      case 'card':
+        return (
+          <div className="p-6 text-center">
+            <h2 className="text-xl font-semibold text-white mb-2">Card Payment</h2>
+            <p className="text-gray-400">Card payments are handled directly in the transaction flow</p>
+          </div>
+        );
+      default:
+        return (
+          <div className="p-6 text-center">
+            <h2 className="text-xl font-semibold text-white mb-2">Coming Soon</h2>
+            <p className="text-gray-400">This wallet connection is not yet implemented</p>
+          </div>
+        );
+    }
+  };
+
+  const renderCoinbaseWalletFlow = () => (
+  const renderCoinbaseWalletFlow = () => (
   const renderCoinbaseWalletFlow = () => (
     <AnimatePresence mode="wait">
       {step === 'login' && (
@@ -413,35 +557,6 @@ export default function WalletConnectionModals({
       )}
     </AnimatePresence>
   );
-
-  const renderWalletFlow = () => {
-    switch (walletType) {
-      case 'abstract':
-        return renderAbstractWalletFlow();
-      case 'pulse':
-        return renderEmbeddedWalletFlow();
-      case 'metamask':
-        return renderExternalWalletFlow();
-      case 'coinbase':
-        return renderCoinbaseWalletFlow();
-      case 'walletconnect':
-        return renderWalletConnectFlow();
-      case 'card':
-        return (
-          <div className="p-6 text-center">
-            <h2 className="text-xl font-semibold text-white mb-2">Card Payment</h2>
-            <p className="text-gray-400">Card payments are handled directly in the transaction flow</p>
-          </div>
-        );
-      default:
-        return (
-          <div className="p-6 text-center">
-            <h2 className="text-xl font-semibold text-white mb-2">Coming Soon</h2>
-            <p className="text-gray-400">This wallet connection is not yet implemented</p>
-          </div>
-        );
-    }
-  };
 
   return (
     <AnimatePresence>
