@@ -592,6 +592,131 @@ export default function TransactionSigningModals({
     </AnimatePresence>
   );
 
+  const renderCardPaymentFlow = () => {
+    const entryInfo = challenge.entryFee.match(/^([\d,]+)\s+(\w+)$/);
+    const amount = entryInfo ? entryInfo[1] : '50';
+    const symbol = entryInfo ? entryInfo[2] : 'MYTH';
+    
+    return (
+      <AnimatePresence mode="wait">
+        {step === 'transaction' && (
+          <motion.div
+            key="card-payment"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="p-6"
+          >
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <CreditCard className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-2xl font-semibold text-white mb-2">Pay with Card</h2>
+              <p className="text-gray-400">
+                Purchase {amount} {symbol} (~${entryInfo.usdValue.toFixed(2)}) to join the tournament
+              </p>
+            </div>
+
+            {/* Amount Display */}
+            <div className="bg-gray-800/50 rounded-lg p-4 mb-6 text-center">
+              <div className="text-3xl font-bold text-white mb-1">
+                {amount} {symbol}
+              </div>
+              <div className="text-gray-400">≈ ${entryInfo.usdValue.toFixed(2)}</div>
+            </div>
+
+            {/* Card Form */}
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Card Number
+                </label>
+                <input
+                  type="text"
+                  placeholder="1234 5678 9012 3456"
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none transition-colors"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Expiry
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="MM/YY"
+                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    CVC
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="123"
+                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <Button
+              onClick={handleApprove}
+              disabled={isLoading}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+            >
+              Pay ${entryInfo.usdValue.toFixed(2)} & Join Tournament
+            </Button>
+
+            {/* Footer */}
+            <div className="text-center mt-6 pt-4 border-t border-gray-700">
+              <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+                <span>Powered by Coinbase Commerce</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {step === 'loading' && (
+          <motion.div
+            key="card-loading"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="p-6 text-center"
+          >
+            <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Loader2 className="w-8 h-8 text-white animate-spin" />
+            </div>
+            <h2 className="text-xl font-semibold text-white mb-2">Processing Payment...</h2>
+            <p className="text-gray-400">Please wait while we process your card payment</p>
+          </motion.div>
+        )}
+
+        {step === 'success' && (
+          <motion.div
+            key="card-success"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="p-6 text-center"
+          >
+            <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Check className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="text-xl font-semibold text-white mb-2">Payment Complete!</h2>
+            <p className="text-gray-400 mb-4">
+              Successfully purchased {amount} {symbol} and joined the tournament!
+            </p>
+            <div className="text-sm text-gray-500">Redirecting to tournament...</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    );
+  };
+
   const renderTransactionFlow = () => {
     switch (walletType) {
       case 'abstract':
@@ -601,6 +726,8 @@ export default function TransactionSigningModals({
         return renderMetaMaskFlow();
       case 'pulse':
         return renderPulseFlow();
+      case 'card':
+        return renderCardPaymentFlow();
       default:
         return (
           <div className="p-6 text-center">

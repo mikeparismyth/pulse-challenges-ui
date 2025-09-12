@@ -74,15 +74,20 @@ export default function JoinChallengeModal({
   const paymentMethods = availableWallets;
 
   const handlePaymentMethodSelect = (methodId: string) => {
-    const connectedWallet = getConnectedWallet(methodId);
-    
-    if (connectedWallet) {
-      // Wallet is connected - allow selection for transaction
+    if (methodId === 'card') {
+      // Card payments skip wallet connection - go directly to transaction/payment
       setSelectedPaymentMethod(methodId);
     } else {
-      // Wallet is not connected - trigger connection flow first
-      console.log('🔗 Wallet not connected, starting connection flow for:', methodId);
-      handleWalletConnection(methodId);
+      const connectedWallet = getConnectedWallet(methodId);
+      
+      if (connectedWallet) {
+        // Wallet is connected - allow selection for transaction
+        setSelectedPaymentMethod(methodId);
+      } else {
+        // Wallet is not connected - trigger connection flow first
+        console.log('🔗 Wallet not connected, starting connection flow for:', methodId);
+        handleWalletConnection(methodId);
+      }
     }
   };
 
