@@ -1,10 +1,19 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { ConnectedWallet, mockConnectedWallets, availableWallets } from './mockWalletData';
+import { ConnectedWallet, availableWallets, getConnectedWalletsForSigninMethod } from './mockWalletData';
+import { useAuth } from './auth';
 
 export function useWalletConnections() {
-  const [connectedWallets, setConnectedWallets] = useState<ConnectedWallet[]>(mockConnectedWallets);
+  const { user, signinMethod } = useAuth(); // NEW: Get auth state
+  
+  // Dynamic connected wallets based on signin method
+  const getConnectedWallets = useCallback(() => {
+    const method = signinMethod || user?.signinMethod || 'email';
+    return getConnectedWalletsForSigninMethod(method);
+  }, [signinMethod, user?.signinMethod]);
+
+  const [additionalWallets, setAdditionalWallets] = useState<ConnectedWallet[]>([]);
 
   const connectWallet = useCallback(async (walletId: string): Promise<ConnectedWallet> => {
     const walletInfo = availableWallets.find(w => w.id === walletId);
@@ -29,13 +38,12 @@ export function useWalletConnections() {
       }
     };
 
-    setConnectedWallets(prev => {
+    // Add to additional connected wallets (runtime connections)
+    setAdditionalWallets(prev => {
       const existing = prev.find(w => w.id === walletId);
       if (existing) {
-        // Update existing wallet to connected state
         return prev.map(w => w.id === walletId ? { ...w, isConnected: true } : w);
       }
-      // Add new connected wallet
       return [...prev, newWallet];
     });
 
@@ -43,28 +51,48 @@ export function useWalletConnections() {
   }, []);
 
   const disconnectWallet = useCallback(async (walletId: string): Promise<void> => {
-    // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
-
-    setConnectedWallets(prev => 
+    
+    setAdditionalWallets(prev => 
       prev.map(w => w.id === walletId ? { ...w, isConnected: false } : w)
     );
   }, []);
 
   const getConnectedWallet = useCallback((walletId: string): ConnectedWallet | undefined => {
-    return connectedWallets.find(w => w.id === walletId && w.isConnected);
-  }, [connectedWallets]);
+    // Check both default wallets (from signin) and additionally connected wallets
+    const defaultWallets = getConnectedWallets();
+    const defaultWallet = defaultWallets.find(w => w.id === walletId && w.isConnected);
+    if (defaultWallet) return defaultWallet;
+
+    // Check additional runtime connections
+    return additionalWallets.find(w => w.id === walletId && w.isConnected);
+  }, [getConnectedWallets, additionalWallets]);
 
   const isWalletConnected = useCallback((walletId: string): boolean => {
-    return connectedWallets.some(w => w.id === walletId && w.isConnected);
-  }, [connectedWallets]);
+    return !!getConnectedWallet(walletId);
+  }, [getConnectedWallet]);
 
   const formatWalletAddress = useCallback((address: string): string => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   }, []);
 
+  const getAllConnectedWallets = useCallback((): ConnectedWallet[] => {
+    const defaultWallets = getConnectedWallets();
+    const additionalConnected = additionalWallets.filter(w => w.isConnected);
+    
+    // Merge and deduplicate
+    const allWallets = [...defaultWallets];
+    additionalConnected.forEach(wallet => {
+      if (!allWallets.find(w => w.id === wallet.id)) {
+        allWallets.push(wallet);
+      }
+    });
+    
+    return allWallets;
+  }, [getConnectedWallets, additionalWallets]);
+
   return {
-    connectedWallets,
+    connectedWallets: getAllConnectedWallets(),
     connectWallet,
     disconnectWallet,
     getConnectedWallet,
@@ -74,8 +102,7 @@ export function useWalletConnections() {
 }
 
 // Engineer replacement strategy:
-// 1. Replace this hook with real Privy hooks
-// 2. connectWallet becomes real Privy wallet connection
-// 3. getConnectedWallet reads from Privy state
-// 4. Component interfaces stay identical
-// 5. No component changes needed
+// 1. Replace getConnectedWalletsForSigninMethod with Privy user.linkedAccounts
+// 2. Replace connectWallet with real Privy wallet connection
+// 3. Replace getConnectedWallet with Privy wallet state
+// 4. Component interfaces stay identical - no component changes needed
