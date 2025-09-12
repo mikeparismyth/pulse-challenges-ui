@@ -113,7 +113,7 @@ export default function PrivySignInModal({ isOpen, onClose, onSuccess }: PrivySi
     setTimeout(() => {
       setStep('success');
       setTimeout(() => {
-        login(mockUser, provider.toLowerCase());
+        login(mockUser, mapToSigninMethod(provider));
         onSuccess();
         toast.success(`Successfully signed in with ${provider}!`);
       }, 1500);
