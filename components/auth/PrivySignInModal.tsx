@@ -77,7 +77,8 @@ export default function PrivySignInModal({ isOpen, onClose, onSuccess }: PrivySi
     setTimeout(() => {
       setStep('success');
       setTimeout(() => {
-        login(mockUser);
+        const method = step === 'email-otp' ? 'email' : 'sms';
+        login(mockUser, method);
         onSuccess();
         toast.success('Successfully signed in!');
       }, 1500);
@@ -92,7 +93,7 @@ export default function PrivySignInModal({ isOpen, onClose, onSuccess }: PrivySi
     setTimeout(() => {
       setStep('success');
       setTimeout(() => {
-        login(mockUser);
+        login(mockUser, provider.toLowerCase());
         onSuccess();
         toast.success(`Successfully signed in with ${provider}!`);
       }, 1500);
@@ -107,7 +108,7 @@ export default function PrivySignInModal({ isOpen, onClose, onSuccess }: PrivySi
     setTimeout(() => {
       setStep('success');
       setTimeout(() => {
-        login(mockUser);
+        login(mockUser, wallet.toLowerCase());
         onSuccess();
         toast.success(`Successfully connected ${wallet}!`);
       }, 1500);
