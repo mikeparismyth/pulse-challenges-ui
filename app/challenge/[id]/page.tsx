@@ -614,6 +614,9 @@ export default function ChallengePage() {
         }}
         getConnectedWallet={getConnectedWallet}
         formatWalletAddress={formatWalletAddress}
+        getConnectedWallet={(walletId: string) => 
+          getConnectedWalletDynamic(walletId, user?.signinMethod || 'email')
+        }
         challenge={{
           title: tournament.title,
           entryFee: tournament.entryFee || '0 MYTH',

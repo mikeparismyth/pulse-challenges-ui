@@ -6,8 +6,9 @@ import { X, Wallet, CreditCard, Smartphone, Shield, Zap, Check } from 'lucide-re
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { availableWallets } from '@/lib/mockWalletData';
+import { availableWallets, getConnectedWalletDynamic, isWalletConnectedDynamic } from '@/lib/mockWalletData';
 import { ConnectedWallet } from '@/lib/mockWalletData';
+import { useAuth } from '@/lib/auth';
 
 interface JoinChallengeModalProps {
   isOpen: boolean;
@@ -35,6 +36,7 @@ export default function JoinChallengeModal({
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [connectingWallet, setConnectingWallet] = useState<string>('');
+  const { signinMethod } = useAuth();
 
   // Reset state when modal closes
   useEffect(() => {
@@ -78,14 +80,13 @@ export default function JoinChallengeModal({
       // Card payments skip wallet connection - go directly to transaction/payment
       setSelectedPaymentMethod(methodId);
     } else {
-      const connectedWallet = getConnectedWallet(methodId);
+      const connectedWallet = getConnectedWalletDynamic(methodId, signinMethod || 'email');
       
       if (connectedWallet) {
         // Wallet is connected - allow selection for transaction
         setSelectedPaymentMethod(methodId);
       } else {
         // Wallet is not connected - trigger connection flow first
-        console.log('🔗 Wallet not connected, starting connection flow for:', methodId);
         handleWalletConnection(methodId);
       }
     }
@@ -98,7 +99,7 @@ export default function JoinChallengeModal({
     onWalletFlowStart(walletType);
   };
 
-  const canJoinChallenge = selectedPaymentMethod && acceptedTerms && getConnectedWallet(selectedPaymentMethod);
+  const canJoinChallenge = selectedPaymentMethod && acceptedTerms && getConnectedWalletDynamic(selectedPaymentMethod, signinMethod || 'email');
 
   const handleJoinChallenge = () => {
     console.log('🚀 handleJoinChallenge called');
@@ -110,7 +111,7 @@ export default function JoinChallengeModal({
       return;
     }
     
-    const connectedWallet = getConnectedWallet(selectedPaymentMethod);
+    const connectedWallet = getConnectedWalletDynamic(selectedPaymentMethod, signinMethod || 'email');
     if (!connectedWallet) {
       toast.error('Please connect your wallet first');
       return;
@@ -214,7 +215,8 @@ export default function JoinChallengeModal({
                                    method.id === 'card' ? CreditCard :
                                    Wallet;
                       const isSelected = selectedPaymentMethod === method.id;
-                      const connectedWallet = getConnectedWallet(method.id);
+                      const connectedWallet = getConnectedWalletDynamic(method.id, signinMethod || 'email');
+                      const isConnected = isWalletConnectedDynamic(method.id, signinMethod || 'email');
                       
                       return (
                         <button
@@ -259,7 +261,7 @@ export default function JoinChallengeModal({
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
-                            {connectedWallet ? (
+                            {isConnected ? (
                               <>
                                 <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
                                   Connected
@@ -321,10 +323,10 @@ export default function JoinChallengeModal({
 
                   <Button
                     onClick={handleJoinChallenge}
-                    disabled={!canJoinChallenge}
+                    disabled={!selectedPaymentMethod || !acceptedTerms || !getConnectedWalletDynamic(selectedPaymentMethod, signinMethod || 'email')}
                     className="w-full btn-gaming-primary text-base py-3 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {selectedPaymentMethod && !getConnectedWallet(selectedPaymentMethod) 
+                    {selectedPaymentMethod && !getConnectedWalletDynamic(selectedPaymentMethod, signinMethod || 'email') 
                       ? `Connect ${availableWallets.find(w => w.id === selectedPaymentMethod)?.name}`
                       : `Join Challenge - ${entryInfo.amount} ${entryInfo.symbol}`
                     }
