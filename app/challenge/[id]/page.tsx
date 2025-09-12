@@ -2,12 +2,14 @@
 
 import { useParams, notFound } from 'next/navigation';
 import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth';
+import { joinChallenge, hasUserJoinedChallenge } from '@/lib/mockChallengeParticipation';
 import { useWalletConnections } from '@/lib/useWalletConnections';
 import { TokenDisplay } from '@/components/ui/TokenDisplay';
 import { ProgressBar } from '@/components/ui/ProgressBar';
@@ -22,7 +24,7 @@ import PrivySignInModal from '@/components/auth/PrivySignInModal';
 export default function ChallengePage() {
   const params = useParams();
   const challengeId = params.id as string;
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { connectWallet, getConnectedWallet, formatWalletAddress } = useWalletConnections();
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
@@ -30,6 +32,14 @@ export default function ChallengePage() {
   const [showWalletFlow, setShowWalletFlow] = useState(false);
   const [showTransactionFlow, setShowTransactionFlow] = useState(false);
   const [selectedWalletType, setSelectedWalletType] = useState<string>('');
+
+  // Initialize hasJoined state based on existing participation
+  useEffect(() => {
+    if (user && challengeId) {
+      const alreadyJoined = hasUserJoinedChallenge(user.id, challengeId);
+      setHasJoined(alreadyJoined);
+    }
+  }, [user, challengeId]);
 
   // Mock tournament data - in real app this would come from API
   const tournaments = [
@@ -284,6 +294,12 @@ export default function ChallengePage() {
     
     if (completedFlow === 'transaction') {
       // Transaction completed - user has joined challenge
+      if (user) {
+        // Add user to challenge participation
+        const participation = joinChallenge(user.id, challengeId, `mock-tx-${Date.now()}`);
+        console.log('📝 Added challenge participation:', participation);
+      }
+      
       setHasJoined(true);
       setShowWalletFlow(false);
       setShowTransactionFlow(false);
@@ -291,10 +307,6 @@ export default function ChallengePage() {
       
       // Show success and update UI
       toast.success(`Successfully joined ${tournament?.title}!`);
-      
-      // TODO: Add user to challenge participation
-      // const { user } = useAuth();
-      // joinChallenge(user.id, challengeId, 'mock-tx-hash');
     } else {
       // Wallet connected - proceed directly to transaction signing
       setShowWalletFlow(false);
@@ -467,13 +479,14 @@ export default function ChallengePage() {
                 <Button
                   className="btn-gaming-primary text-base md:text-lg px-6 md:px-8 py-3 md:py-4 flex items-center space-x-2 shadow-gaming-hover w-full sm:w-auto"
                   onClick={handleJoinClick}
-                  disabled={tournament.status === 'ENDED'}
+                  disabled={tournament.status === 'ENDED' || hasJoined}
                 >
                   <Zap className="w-5 h-5" />
                   <span>
-                    {tournament.status === 'LIVE' ? 'JOIN NOW' : 
+                    {hasJoined ? 'JOINED' : 
+                     tournament.status === 'LIVE' ? 'JOIN NOW' : 
                      tournament.status === 'UPCOMING' ? 'JOIN' : 'VIEW RESULTS'}
-                    {entryInfo && tournament.status !== 'ENDED' && (
+                    {entryInfo && tournament.status !== 'ENDED' && !hasJoined && (
                       <span className="ml-2 text-sm opacity-90">
                         - {entryInfo.amount} {entryInfo.symbol} (${entryInfo.usdValue.toFixed(2)})
                       </span>
