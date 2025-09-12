@@ -14,20 +14,31 @@ export interface User {
   level: number;
   xp: number;
   totalEarnings: string;
+  signinMethod?: 'email' | 'sms' | 'metamask' | 'coinbase' | 'rainbow' | 'walletconnect' | 'phantom' | 'google' | 'discord';
 }
 
 interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
-  login: (user: User) => void;
+  signinMethod: string | null;
+  login: (user: User, method?: string) => void;
   logout: () => void;
 }
 
 export const useAuth = create<AuthState>((set) => ({
   isAuthenticated: false,
   user: null,
-  login: (user) => set({ isAuthenticated: true, user }),
-  logout: () => set({ isAuthenticated: false, user: null }),
+  signinMethod: null,
+  login: (user, method = 'email') => set({ 
+    isAuthenticated: true, 
+    user: { ...user, signinMethod: method }, 
+    signinMethod: method 
+  }),
+  logout: () => set({ 
+    isAuthenticated: false, 
+    user: null, 
+    signinMethod: null 
+  }),
 }));
 
 // Mock user data for demonstration
@@ -40,5 +51,6 @@ export const mockUser: User = {
   createdAt: '2024-01-15T10:30:00Z',
   level: 12,
   xp: 2450,
-  totalEarnings: '1,250 MYTH'
+  totalEarnings: '1,250 MYTH',
+  signinMethod: 'email'
 };
