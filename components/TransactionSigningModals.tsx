@@ -290,40 +290,6 @@ export default function WalletConnectionModals({
     </AnimatePresence>
   );
 
-  const renderWalletFlow = () => {
-    switch (walletType) {
-      case 'abstract':
-        return renderAbstractWalletFlow();
-      case 'pulse':
-        return renderEmbeddedWalletFlow();
-      case 'metamask':
-        return renderExternalWalletFlow();
-      case 'coinbase':
-        return renderCoinbaseWalletFlow();
-      case 'walletconnect':
-        return renderWalletConnectFlow();
-      case 'coinbase':
-        return renderCoinbaseWalletFlow();
-      case 'walletconnect':
-        return renderWalletConnectFlow();
-      case 'card':
-        return (
-          <div className="p-6 text-center">
-            <h2 className="text-xl font-semibold text-white mb-2">Card Payment</h2>
-            <p className="text-gray-400">Card payments are handled directly in the transaction flow</p>
-          </div>
-        );
-      default:
-        return (
-          <div className="p-6 text-center">
-            <h2 className="text-xl font-semibold text-white mb-2">Coming Soon</h2>
-            <p className="text-gray-400">This wallet connection is not yet implemented</p>
-          </div>
-        );
-    }
-  };
-
-  const renderCoinbaseWalletFlow = () => (
   const renderCoinbaseWalletFlow = () => (
     <AnimatePresence mode="wait">
       {step === 'login' && (
@@ -447,6 +413,35 @@ export default function WalletConnectionModals({
       )}
     </AnimatePresence>
   );
+
+  const renderWalletFlow = () => {
+    switch (walletType) {
+      case 'abstract':
+        return renderAbstractWalletFlow();
+      case 'pulse':
+        return renderEmbeddedWalletFlow();
+      case 'metamask':
+        return renderExternalWalletFlow();
+      case 'coinbase':
+        return renderCoinbaseWalletFlow();
+      case 'walletconnect':
+        return renderWalletConnectFlow();
+      case 'card':
+        return (
+          <div className="p-6 text-center">
+            <h2 className="text-xl font-semibold text-white mb-2">Card Payment</h2>
+            <p className="text-gray-400">Card payments are handled directly in the transaction flow</p>
+          </div>
+        );
+      default:
+        return (
+          <div className="p-6 text-center">
+            <h2 className="text-xl font-semibold text-white mb-2">Coming Soon</h2>
+            <p className="text-gray-400">This wallet connection is not yet implemented</p>
+          </div>
+        );
+    }
+  };
 
   return (
     <AnimatePresence>
