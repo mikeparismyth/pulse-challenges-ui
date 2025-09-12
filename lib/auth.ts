@@ -22,7 +22,7 @@ type SigninMethod = 'email' | 'sms' | 'metamask' | 'coinbase' | 'rainbow' | 'wal
 interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
-  signinMethod: string | null;
+  signinMethod: SigninMethod | null;
   login: (user: User, method?: SigninMethod) => void;
   logout: () => void;
 }

@@ -7,6 +7,23 @@ import { Button } from '@/components/ui/button';
 import { useAuth, mockUser } from '@/lib/auth';
 import { toast } from 'sonner';
 
+// Map display names to signin method keys
+const mapToSigninMethod = (displayName: string): 'email' | 'sms' | 'metamask' | 'coinbase' | 'rainbow' | 'walletconnect' | 'phantom' | 'google' | 'discord' => {
+  const mapping: { [key: string]: 'email' | 'sms' | 'metamask' | 'coinbase' | 'rainbow' | 'walletconnect' | 'phantom' | 'google' | 'discord' } = {
+    'coinbase wallet': 'coinbase',
+    'metamask': 'metamask',
+    'rainbow': 'rainbow',
+    'gnosis': 'walletconnect', // Treat as walletconnect
+    'phantom': 'phantom',
+    'walletconnect': 'walletconnect',
+    'google': 'google',
+    'discord': 'discord'
+  };
+  
+  const key = displayName.toLowerCase();
+  return mapping[key] || 'metamask'; // Default fallback
+};
+
 interface PrivySignInModalProps {
   isOpen: boolean;
   onClose: () => void;
