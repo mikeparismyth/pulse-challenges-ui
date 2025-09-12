@@ -280,15 +280,31 @@ export default function ChallengePage() {
   };
 
   const handleWalletSuccess = () => {
-    console.log('✅ Wallet connection successful');
-    setShowWalletFlow(false);
-    setShowTransactionFlow(false);
-    setSelectedWalletType('');
+  const handleWalletSuccess = (completedFlow?: 'connection' | 'transaction') => {
+    console.log('✅ Wallet flow completed:', completedFlow);
     
-    // Reopen join modal after short delay to show newly connected wallet
-    setTimeout(() => {
-      setShowJoinModal(true);
-    }, 500);
+    if (completedFlow === 'transaction') {
+      // Transaction completed - user has joined challenge
+      setHasJoined(true);
+      setShowWalletFlow(false);
+      setShowTransactionFlow(false);
+      setSelectedWalletType('');
+      
+      // Show success and update UI
+      toast.success(`Successfully joined ${tournament?.title}!`);
+      
+      // TODO: Add user to challenge participation
+      // const { user } = useAuth();
+      // joinChallenge(user.id, challengeId, 'mock-tx-hash');
+    } else {
+      // Wallet connected - proceed directly to transaction signing
+      setShowWalletFlow(false);
+      
+      // Seamlessly transition to transaction flow
+      setTimeout(() => {
+        setShowTransactionFlow(true);
+      }, 100);
+    }
   };
 
   // Mock leaderboard data
@@ -622,7 +638,7 @@ export default function ChallengePage() {
           setShowWalletFlow(false);
           setSelectedWalletType('');
         }}
-        onSuccess={handleWalletSuccess}
+        onSuccess={() => handleWalletSuccess('connection')}
         onConnect={connectWallet}
         challenge={{
           title: tournament.title,
@@ -639,7 +655,7 @@ export default function ChallengePage() {
           setShowTransactionFlow(false);
           setSelectedWalletType('');
         }}
-        onSuccess={handleWalletSuccess}
+        onSuccess={() => handleWalletSuccess('transaction')}
         connectedWallet={getConnectedWallet(selectedWalletType)!}
         challenge={{
           title: tournament.title,
