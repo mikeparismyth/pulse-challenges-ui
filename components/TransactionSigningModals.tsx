@@ -722,8 +722,11 @@ export default function TransactionSigningModals({
       case 'abstract':
         return renderAbstractFlow();
       case 'metamask':
-      case 'walletconnect':
         return renderMetaMaskFlow();
+      case 'coinbase':
+        return renderCoinbaseFlow();
+      case 'walletconnect':
+        return renderWalletConnectFlow();
       case 'pulse':
         return renderPulseFlow();
       case 'card':
@@ -737,6 +740,246 @@ export default function TransactionSigningModals({
         );
     }
   };
+
+  const renderCoinbaseFlow = () => (
+    <AnimatePresence mode="wait">
+      {step === 'transaction' && (
+        <motion.div
+          key="coinbase-transaction"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="p-6"
+        >
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                <span className="text-blue-600 font-bold text-sm">C</span>
+              </div>
+            </div>
+            <h2 className="text-xl font-semibold text-white mb-2">Confirming with Coinbase Wallet</h2>
+          </div>
+
+          {/* Transaction Details */}
+          <div className="bg-gray-800/50 rounded-lg p-4 mb-6">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-400">Total</span>
+                <span className="text-sm font-medium text-white">${totalUsd.toFixed(2)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-400">To</span>
+                <span className="text-sm font-mono text-white">0x1234...4568</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-400">Network</span>
+                <span className="text-sm font-medium text-blue-400">Base</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-400">Estimated fee</span>
+                <span className="text-sm font-medium text-white">${networkFee.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Wallet Mockup */}
+          <div className="bg-gray-900 rounded-2xl p-4 mb-6 border border-gray-700">
+            <div className="bg-blue-600 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                    <span className="text-blue-600 text-xs font-bold">C</span>
+                  </div>
+                  <span className="text-white text-sm">Coinbase Wallet</span>
+                </div>
+                <div className="w-4 h-4 bg-white rounded-full" />
+              </div>
+              
+              <div className="text-center mb-4">
+                <div className="text-2xl font-bold text-white mb-1">
+                  {entryInfo.amount} {entryInfo.symbol}
+                </div>
+                <div className="text-blue-200 text-sm">${entryInfo.usdValue.toFixed(2)}</div>
+              </div>
+
+              <div className="flex gap-2">
+                <button className="flex-1 bg-blue-800 text-white py-2 px-4 rounded-lg text-sm">
+                  Reject
+                </button>
+                <button 
+                  onClick={handleApprove}
+                  className="flex-1 bg-white text-blue-600 py-2 px-4 rounded-lg text-sm font-semibold"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+              <span>Protected by</span>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 bg-white rounded-sm"></div>
+                <span className="font-semibold text-white">privy</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {step === 'loading' && (
+        <motion.div
+          key="coinbase-loading"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="p-6 text-center"
+        >
+          <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Loader2 className="w-8 h-8 text-white animate-spin" />
+          </div>
+          <h2 className="text-xl font-semibold text-white mb-2">Processing Transaction...</h2>
+          <p className="text-gray-400">Confirming transaction on the blockchain</p>
+        </motion.div>
+      )}
+
+      {step === 'success' && (
+        <motion.div
+          key="coinbase-success"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="p-6 text-center"
+        >
+          <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Check className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-xl font-semibold text-white mb-2">Transaction Complete!</h2>
+          <p className="text-gray-400 mb-4">Successfully joined {challenge.title}</p>
+          <div className="text-sm text-gray-500">Redirecting to tournament...</div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
+  const renderWalletConnectFlow = () => (
+    <AnimatePresence mode="wait">
+      {step === 'transaction' && (
+        <motion.div
+          key="walletconnect-transaction"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="p-6"
+        >
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Smartphone className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="text-xl font-semibold text-white mb-2">Confirming with WalletConnect</h2>
+            <p className="text-gray-400 text-sm">Check your mobile wallet to approve the transaction</p>
+          </div>
+
+          {/* Transaction Details */}
+          <div className="bg-gray-800/50 rounded-lg p-4 mb-6">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-400">Total</span>
+                <span className="text-sm font-medium text-white">${totalUsd.toFixed(2)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-400">To</span>
+                <span className="text-sm font-mono text-white">0x1234...4568</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-400">Network</span>
+                <span className="text-sm font-medium text-blue-400">Ethereum</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-400">Estimated fee</span>
+                <span className="text-sm font-medium text-white">${networkFee.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Connection Visual */}
+          <div className="bg-gray-900 rounded-2xl p-6 mb-6 border border-gray-700">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center">
+                  <span className="text-white text-lg">💻</span>
+                </div>
+                <div className="flex-1 h-px bg-gradient-to-r from-blue-500 to-purple-500 relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse"></div>
+                </div>
+                <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+                  <Smartphone className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              <p className="text-gray-300 text-sm mb-2">Connected to mobile wallet</p>
+              <p className="text-gray-500 text-xs">Waiting for approval...</p>
+            </div>
+          </div>
+
+          {/* Action Button */}
+          <button
+            onClick={handleApprove}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-medium transition-colors mb-4"
+          >
+            Simulate Mobile Approval
+          </button>
+
+          {/* Footer */}
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+              <span>Protected by</span>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 bg-white rounded-sm"></div>
+                <span className="font-semibold text-white">privy</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {step === 'loading' && (
+        <motion.div
+          key="walletconnect-loading"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="p-6 text-center"
+        >
+          <div className="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Loader2 className="w-8 h-8 text-white animate-spin" />
+          </div>
+          <h2 className="text-xl font-semibold text-white mb-2">Processing Transaction...</h2>
+          <p className="text-gray-400">Confirming transaction via WalletConnect</p>
+        </motion.div>
+      )}
+
+      {step === 'success' && (
+        <motion.div
+          key="walletconnect-success"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="p-6 text-center"
+        >
+          <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Check className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-xl font-semibold text-white mb-2">Transaction Complete!</h2>
+          <p className="text-gray-400 mb-4">Successfully joined {challenge.title}</p>
+          <div className="text-sm text-gray-500">Redirecting to tournament...</div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 
   return (
     <AnimatePresence>
