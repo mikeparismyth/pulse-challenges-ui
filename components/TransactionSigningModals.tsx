@@ -593,9 +593,9 @@ export default function TransactionSigningModals({
   );
 
   const renderCardPaymentFlow = () => {
-    const entryInfo = challenge.entryFee.match(/^([\d,]+)\s+(\w+)$/);
-    const amount = entryInfo ? entryInfo[1] : '50';
-    const symbol = entryInfo ? entryInfo[2] : 'MYTH';
+    const feeMatch = challenge.entryFee.match(/^([\d,]+)\s+(\w+)$/);
+    const amount = feeMatch ? feeMatch[1] : '50';
+    const symbol = feeMatch ? feeMatch[2] : 'MYTH';
     
     return (
       <AnimatePresence mode="wait">
