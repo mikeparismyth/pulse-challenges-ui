@@ -19,6 +19,7 @@ import JoinChallengeModal from '@/components/JoinChallengeModal';
 import WalletConnectionModals from '@/components/WalletConnectionModals';
 import TransactionSigningModals from '@/components/TransactionSigningModals';
 import PrivySignInModal from '@/components/auth/PrivySignInModal';
+import { mockTournaments } from '@/lib/mockData';
 
 export default function ChallengePage() {
   const params = useParams();
@@ -40,143 +41,8 @@ export default function ChallengePage() {
     }
   }, [user, challengeId]);
 
-  // Mock tournament data - in real app this would come from API
-  const tournaments = [
-    {
-      id: 'tournament-1',
-      title: 'Fortnite Battle Royale Championship',
-      status: 'LIVE' as const,
-      prizePool: '4,350 MYTH',
-      participants: 87,
-      maxParticipants: 100,
-      entryFee: '50 MYTH',
-      timeRemaining: 'In Progress',
-      description: 'Epic Fortnite tournament with massive prize pool. Battle against the best players in intense matches.',
-      organizerFeeBps: 200, // 2% organizer fee
-      developerFeeBps: 800, // 8% developer fee
-      rules: [
-        'Tournament runs for 4 hours with unlimited matches',
-        'Top 1 finishes count towards leaderboard score',
-        'Must maintain 60+ FPS and stable connection',
-        'No teaming or stream sniping allowed',
-        'Disputes handled within 24 hours'
-      ],
-      startTime: '2025-01-15T18:00:00Z',
-      endTime: '2025-01-15T22:00:00Z'
-    },
-    {
-      id: 'tournament-2',
-      title: 'Valorant Champions Series',
-      status: 'UPCOMING' as const,
-      prizePool: '2,952 PENGU',
-      participants: 32,
-      maxParticipants: 64,
-      entryFee: '100 PENGU',
-      timeRemaining: 'Starts in 2 hours',
-      description: 'Competitive Valorant tournament for skilled players. Prove your tactical prowess.',
-      organizerFeeBps: 150, // 1.5% organizer fee
-      developerFeeBps: 800, // 8% developer fee
-      rules: [
-        'Best of 3 matches in elimination format',
-        'Standard competitive ruleset applies',
-        'Team registration required 1 hour before start',
-        'Anti-cheat software mandatory',
-        'Prize distribution within 48 hours'
-      ],
-      startTime: '2025-01-20T16:00:00Z',
-      endTime: '2025-01-20T20:00:00Z'
-    },
-    {
-      id: 'tournament-3',
-      title: 'League of Legends World Cup',
-      status: 'UPCOMING' as const,
-      prizePool: '1,080 MYTH',
-      participants: 16,
-      maxParticipants: 32,
-      entryFee: '75 MYTH',
-      timeRemaining: 'Starts in 1 day',
-      description: 'Premier League of Legends tournament with international players.',
-      organizerFeeBps: 300, // 3% organizer fee
-      developerFeeBps: 800, // 8% developer fee
-      rules: [
-        'Draft pick mode with standard ban phase',
-        '5v5 Summoner\'s Rift matches only',
-        'Tournament realm required for all matches',
-        'Professional referee oversight',
-        'Coaching allowed between games'
-      ],
-      startTime: '2025-01-25T12:00:00Z',
-      endTime: '2025-01-25T18:00:00Z'
-    },
-    {
-      id: 'tournament-4',
-      title: 'CS2 Major Championship',
-      status: 'ENDED' as const,
-      prizePool: '5,520 PENGU',
-      participants: 24,
-      maxParticipants: 24,
-      entryFee: '250 PENGU',
-      timeRemaining: 'Completed',
-      description: 'Completed CS2 tournament with epic matches and skilled players.',
-      organizerFeeBps: 0, // 0% organizer fee
-      developerFeeBps: 800, // 8% developer fee
-      rules: [
-        'Tournament completed successfully',
-        'All prizes have been distributed',
-        'Final rankings are locked',
-        'Replay footage available for review',
-        'Post-tournament analysis published'
-      ],
-      startTime: '2025-01-10T14:00:00Z',
-      endTime: '2025-01-10T18:00:00Z'
-    },
-    {
-      id: 'tournament-5',
-      title: 'Rocket League Championship',
-      status: 'ENDED' as const,
-      prizePool: '1,296 MYTH',
-      participants: 48,
-      maxParticipants: 48,
-      entryFee: '30 MYTH',
-      timeRemaining: 'Completed',
-      description: 'Completed Rocket League tournament showcasing incredible aerial skills and teamwork.',
-      organizerFeeBps: 100, // 1% organizer fee
-      developerFeeBps: 800, // 8% developer fee
-      rules: [
-        'Tournament completed successfully',
-        'All matches played in competitive 3v3 format',
-        'Final standings are official and locked',
-        'Prize distribution completed',
-        'Replay files available for download'
-      ],
-      startTime: '2025-01-05T15:00:00Z',
-      endTime: '2025-01-05T19:00:00Z'
-    },
-    {
-      id: 'tournament-6',
-      title: 'Apex Legends Arena',
-      status: 'UPCOMING' as const,
-      prizePool: '864 PENGU',
-      participants: 12,
-      maxParticipants: 60,
-      entryFee: '80 PENGU',
-      timeRemaining: 'Starts in 3 days',
-      description: 'Intense battle royale competition in the Apex Games arena.',
-      organizerFeeBps: 250, // 2.5% organizer fee
-      developerFeeBps: 800, // 8% developer fee
-      rules: [
-        'Squad-based battle royale format',
-        'Random team assignment available',
-        'Standard Apex Legends competitive rules',
-        'Anti-cheat monitoring active',
-        'Communication via in-game voice chat recommended'
-      ],
-      startTime: '2025-01-28T20:00:00Z',
-      endTime: '2025-01-29T00:00:00Z'
-    }
-  ];
-
-  const tournament = tournaments.find(t => t.id === challengeId);
+  // Find tournament from mock data
+  const tournament = mockTournaments.find(t => t.id === challengeId);
 
   if (!tournament) {
     notFound();
