@@ -294,7 +294,6 @@ export default function WalletConnectionModals({
           <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Check className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-xl font-semibold text-white mb-2">MetaMask Connected</h2>
           <h2 className="text-xl font-semibold text-white mb-2">{config.name} Connected</h2>
           <p className="text-gray-400 mb-4">Connected address: 0x5432...8765</p>
           <div className="text-sm text-gray-500">Proceeding to transaction...</div>
