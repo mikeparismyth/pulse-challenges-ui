@@ -1,7 +1,6 @@
 'use client';
 
 import { useParams, notFound } from 'next/navigation';
-import { mockTournaments } from '@/lib/mockData';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
@@ -20,13 +19,6 @@ import JoinChallengeModal from '@/components/JoinChallengeModal';
 import WalletConnectionModals from '@/components/WalletConnectionModals';
 import TransactionSigningModals from '@/components/TransactionSigningModals';
 import PrivySignInModal from '@/components/auth/PrivySignInModal';
-
-// Server component for static generation
-export async function generateStaticParams() {
-  return mockTournaments.map((tournament) => ({
-    id: tournament.id
-  }));
-}
 
 export default function ChallengePage() {
   const params = useParams();
