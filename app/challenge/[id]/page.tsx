@@ -19,7 +19,6 @@ import JoinChallengeModal from '@/components/JoinChallengeModal';
 import WalletConnectionModals from '@/components/WalletConnectionModals';
 import TransactionSigningModals from '@/components/TransactionSigningModals';
 import PrivySignInModal from '@/components/auth/PrivySignInModal';
-import { mockTournaments } from '@/lib/mockData';
 
 export default function ChallengePage() {
   const params = useParams();
@@ -41,8 +40,144 @@ export default function ChallengePage() {
     }
   }, [user, challengeId]);
 
-  // Find tournament from mock data
-  const tournament = mockTournaments.find(t => t.id === challengeId);
+  // Simple tournament data for display
+  const tournaments = [
+    {
+      id: '550e8400-e29b-41d4-a716-446655440001',
+      title: 'Fortnite Battle Royale Championship',
+      status: 'LIVE' as const,
+      prizePool: '4,350 MYTH',
+      participants: 87,
+      maxParticipants: 100,
+      entryFee: '50 MYTH',
+      timeRemaining: 'In Progress',
+      startTime: '2025-01-15T18:00:00Z',
+      endTime: '2025-01-15T22:00:00Z',
+      description: 'Epic Fortnite tournament with massive prize pool',
+      organizerFeeBps: 200,
+      developerFeeBps: 800,
+      rules: [
+        'All participants must be registered before the tournament starts',
+        'No cheating, hacking, or exploiting game mechanics',
+        'Players must stream their gameplay for verification',
+        'Tournament format: Battle Royale with elimination scoring',
+        'Prize distribution based on final leaderboard rankings'
+      ]
+    },
+    {
+      id: '550e8400-e29b-41d4-a716-446655440002',
+      title: 'Valorant Champions Series',
+      status: 'UPCOMING' as const,
+      prizePool: '2,952 PENGU',
+      participants: 32,
+      maxParticipants: 64,
+      entryFee: '100 PENGU',
+      timeRemaining: 'Starts in 2 hours',
+      startTime: '2025-01-20T16:00:00Z',
+      endTime: '2025-01-20T20:00:00Z',
+      description: 'Competitive Valorant tournament for skilled players',
+      organizerFeeBps: 150,
+      developerFeeBps: 800,
+      rules: [
+        'Team-based 5v5 matches with standard Valorant rules',
+        'Single elimination bracket format',
+        'All matches must be completed within the time window',
+        'Anti-cheat software required for all participants',
+        'Communication in team voice chat is mandatory'
+      ]
+    },
+    {
+      id: '550e8400-e29b-41d4-a716-446655440003',
+      title: 'League of Legends World Cup',
+      status: 'UPCOMING' as const,
+      prizePool: '1,080 MYTH',
+      participants: 16,
+      maxParticipants: 32,
+      entryFee: '75 MYTH',
+      timeRemaining: 'Starts in 1 day',
+      startTime: '2025-01-25T12:00:00Z',
+      endTime: '2025-01-25T18:00:00Z',
+      description: 'Premier League of Legends tournament with international players',
+      organizerFeeBps: 300,
+      developerFeeBps: 800,
+      rules: [
+        'Draft pick mode with standard ban/pick phase',
+        'Best of 3 matches in group stage, Best of 5 in finals',
+        'No coaching during matches',
+        'Standard League of Legends tournament rules apply',
+        'All participants must have Diamond+ ranking'
+      ]
+    },
+    {
+      id: '550e8400-e29b-41d4-a716-446655440004',
+      title: 'CS2 Major Championship',
+      status: 'LIVE' as const,
+      prizePool: '5,520 PENGU',
+      participants: 24,
+      maxParticipants: 24,
+      entryFee: '250 PENGU',
+      timeRemaining: 'In Progress',
+      startTime: '2025-01-15T14:00:00Z',
+      endTime: '2025-01-15T20:00:00Z',
+      description: 'High-stakes CS2 tournament for professional teams',
+      organizerFeeBps: 0,
+      developerFeeBps: 800,
+      rules: [
+        'Professional Counter-Strike 2 rules and regulations',
+        'Swiss system group stage followed by single elimination',
+        'Anti-cheat measures strictly enforced',
+        'Team substitutions allowed only before tournament start',
+        'All matches played on official tournament servers'
+      ]
+    },
+    {
+      id: '550e8400-e29b-41d4-a716-446655440005',
+      title: 'Rocket League Championship',
+      status: 'ENDED' as const,
+      prizePool: '1,296 MYTH',
+      participants: 48,
+      maxParticipants: 48,
+      entryFee: '30 MYTH',
+      timeRemaining: 'Completed',
+      startTime: '2025-01-10T10:00:00Z',
+      endTime: '2025-01-10T16:00:00Z',
+      description: 'Fast-paced Rocket League tournament with amazing rewards',
+      organizerFeeBps: 100,
+      developerFeeBps: 800,
+      rules: [
+        '3v3 standard Rocket League matches',
+        'Double elimination bracket format',
+        'Standard competitive settings and mutators',
+        'No custom training or workshop maps allowed',
+        'Fair play and sportsmanship required at all times'
+      ]
+    },
+    {
+      id: '550e8400-e29b-41d4-a716-446655440006',
+      title: 'Apex Legends Arena',
+      status: 'UPCOMING' as const,
+      prizePool: '864 PENGU',
+      participants: 12,
+      maxParticipants: 60,
+      entryFee: '80 PENGU',
+      timeRemaining: 'Starts in 3 days',
+      startTime: '2025-01-30T15:00:00Z',
+      endTime: '2025-01-30T21:00:00Z',
+      description: 'Intense Apex Legends battle royale tournament',
+      organizerFeeBps: 250,
+      developerFeeBps: 800,
+      rules: [
+        'Battle Royale mode with standard Apex Legends rules',
+        'Solo queue only - no pre-made teams',
+        'Points awarded based on placement and eliminations',
+        'Multiple rounds with cumulative scoring',
+        'Anti-cheat software mandatory for all participants'
+      ]
+    }
+  ];
+
+  // Find tournament by ID
+  const tournament = tournaments.find(t => t.id === challengeId);
 
   if (!tournament) {
     notFound();
