@@ -1,8 +1,28 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { ConnectedWallet, availableWallets, getConnectedWalletsForSigninMethod } from './mockWalletData';
 import { useAuth } from './auth';
+
+// Helper functions for localStorage persistence
+const saveWalletsToStorage = (wallets: ConnectedWallet[]) => {
+  try {
+    localStorage.setItem('pulse-connected-wallets', JSON.stringify(wallets));
+  } catch (error) {
+    console.error('Failed to save wallets to storage:', error);
+  }
+};
+
+const loadWalletsFromStorage = (): ConnectedWallet[] => {
+  try {
+    const stored = localStorage.getItem('pulse-connected-wallets');
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.error('Failed to load wallets from storage:', error);
+    return [];
+  }
+};
 
 export function useWalletConnections() {
   const { user, signinMethod } = useAuth(); // NEW: Get auth state
@@ -14,6 +34,12 @@ export function useWalletConnections() {
   }, [signinMethod, user?.signinMethod]);
 
   const [additionalWallets, setAdditionalWallets] = useState<ConnectedWallet[]>([]);
+
+  // Initialize additionalWallets from localStorage on mount
+  useEffect(() => {
+    const storedWallets = loadWalletsFromStorage();
+    setAdditionalWallets(storedWallets);
+  }, []);
 
   const connectWallet = useCallback(async (walletId: string): Promise<ConnectedWallet> => {
     const walletInfo = availableWallets.find(w => w.id === walletId);
@@ -38,14 +64,23 @@ export function useWalletConnections() {
       }
     };
 
-    // Add to additional connected wallets (runtime connections)
-    setAdditionalWallets(prev => {
-      const existing = prev.find(w => w.id === walletId);
-      if (existing) {
-        return prev.map(w => w.id === walletId ? { ...w, isConnected: true } : w);
-      }
-      return [...prev, newWallet];
-    });
+    // Load current wallets, add/update new wallet, save back to storage
+    const currentWallets = loadWalletsFromStorage();
+    const existingIndex = currentWallets.findIndex(w => w.id === walletId);
+    
+    let updatedWallets;
+    if (existingIndex >= 0) {
+      // Update existing wallet
+      updatedWallets = currentWallets.map(w => 
+        w.id === walletId ? { ...w, isConnected: true } : w
+      );
+    } else {
+      // Add new wallet
+      updatedWallets = [...currentWallets, newWallet];
+    }
+    
+    saveWalletsToStorage(updatedWallets);
+    setAdditionalWallets(updatedWallets);
 
     return newWallet;
   }, []);
@@ -53,9 +88,14 @@ export function useWalletConnections() {
   const disconnectWallet = useCallback(async (walletId: string): Promise<void> => {
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    setAdditionalWallets(prev => 
-      prev.map(w => w.id === walletId ? { ...w, isConnected: false } : w)
+    // Load current wallets, mark wallet as disconnected, save back to storage
+    const currentWallets = loadWalletsFromStorage();
+    const updatedWallets = currentWallets.map(w => 
+      w.id === walletId ? { ...w, isConnected: false } : w
     );
+    
+    saveWalletsToStorage(updatedWallets);
+    setAdditionalWallets(updatedWallets);
   }, []);
 
   const getConnectedWallet = useCallback((walletId: string): ConnectedWallet | undefined => {
@@ -64,8 +104,9 @@ export function useWalletConnections() {
     const defaultWallet = defaultWallets.find(w => w.id === walletId && w.isConnected);
     if (defaultWallet) return defaultWallet;
 
-    // Check additional runtime connections
-    return additionalWallets.find(w => w.id === walletId && w.isConnected);
+    // Check additional runtime connections from localStorage
+    const storedWallets = loadWalletsFromStorage();
+    return storedWallets.find(w => w.id === walletId && w.isConnected);
   }, [getConnectedWallets, additionalWallets]);
 
   const isWalletConnected = useCallback((walletId: string): boolean => {
