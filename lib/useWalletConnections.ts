@@ -6,6 +6,7 @@ import { useAuth } from './auth';
 
 // Helper functions for localStorage persistence
 const saveWalletsToStorage = (wallets: ConnectedWallet[]) => {
+  if (typeof window === 'undefined') return;
   try {
     localStorage.setItem('pulse-connected-wallets', JSON.stringify(wallets));
   } catch (error) {
@@ -14,6 +15,7 @@ const saveWalletsToStorage = (wallets: ConnectedWallet[]) => {
 };
 
 const loadWalletsFromStorage = (): ConnectedWallet[] => {
+  if (typeof window === 'undefined') return [];
   try {
     const stored = localStorage.getItem('pulse-connected-wallets');
     return stored ? JSON.parse(stored) : [];
