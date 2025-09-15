@@ -229,6 +229,18 @@ export default function WalletConnectionModals({
 
   const renderExternalWalletFlow = () => (
     <AnimatePresence mode="wait">
+      {(() => {
+        // Dynamic wallet configuration
+        const walletConfigs = {
+          metamask: { name: 'MetaMask', color: 'orange-600', icon: 'M' },
+          walletconnect: { name: 'WalletConnect', color: 'blue-500', icon: 'W' },
+          coinbase: { name: 'Coinbase Wallet', color: 'blue-600', icon: 'C' }
+        };
+        
+        const config = walletConfigs[walletType as keyof typeof walletConfigs] || walletConfigs.metamask;
+        
+        return (
+          <>
       {step === 'login' && (
         <motion.div
           key="external-login"
@@ -237,20 +249,20 @@ export default function WalletConnectionModals({
           exit={{ opacity: 0, y: -20 }}
           className="p-6 text-center"
         >
-          <div className="w-16 h-16 bg-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className={`w-16 h-16 bg-${config.color} rounded-2xl flex items-center justify-center mx-auto mb-4`}>
             <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-orange-600 font-bold text-sm">M</span>
+              <span className={`text-${config.color} font-bold text-sm`}>{config.icon}</span>
             </div>
           </div>
-          <h2 className="text-2xl font-semibold text-white mb-2">Connect MetaMask</h2>
+          <h2 className="text-2xl font-semibold text-white mb-2">Connect {config.name}</h2>
           <p className="text-gray-400 mb-8">
-            Connect your MetaMask wallet to continue
+            Connect your {config.name} wallet to continue
           </p>
           <Button
             onClick={handleExternalWallet}
-            className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-lg font-medium transition-colors"
+            className={`w-full bg-${config.color} hover:bg-${config.color.replace('-600', '-700').replace('-500', '-600')} text-white py-3 rounded-lg font-medium transition-colors`}
           >
-            Connect MetaMask
+            Connect {config.name}
           </Button>
         </motion.div>
       )}
@@ -263,11 +275,11 @@ export default function WalletConnectionModals({
           exit={{ opacity: 0, y: -20 }}
           className="p-6 text-center"
         >
-          <div className="w-16 h-16 bg-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className={`w-16 h-16 bg-${config.color} rounded-2xl flex items-center justify-center mx-auto mb-4`}>
             <Loader2 className="w-8 h-8 text-white animate-spin" />
           </div>
           <h2 className="text-xl font-semibold text-white mb-2">Waiting for approval...</h2>
-          <p className="text-gray-400">Please approve the connection in your MetaMask wallet</p>
+          <p className="text-gray-400">Please approve the connection in your {config.name} wallet</p>
         </motion.div>
       )}
 
@@ -282,11 +294,14 @@ export default function WalletConnectionModals({
           <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Check className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-xl font-semibold text-white mb-2">MetaMask Connected</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">{config.name} Connected</h2>
           <p className="text-gray-400 mb-4">Connected address: 0x5432...8765</p>
           <div className="text-sm text-gray-500">Proceeding to transaction...</div>
         </motion.div>
       )}
+          </>
+        );
+      })()}
     </AnimatePresence>
   );
 
@@ -297,6 +312,8 @@ export default function WalletConnectionModals({
       case 'pulse':
         return renderEmbeddedWalletFlow();
       case 'metamask':
+      case 'walletconnect':
+      case 'coinbase':
         return renderExternalWalletFlow();
       case 'card':
         return (

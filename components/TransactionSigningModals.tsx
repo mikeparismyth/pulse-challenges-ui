@@ -316,14 +316,26 @@ export default function TransactionSigningModals({
           exit={{ opacity: 0, y: -20 }}
           className="p-6"
         >
+          {(() => {
+            // Dynamic wallet configuration
+            const walletConfigs = {
+              metamask: { name: 'MetaMask', color: 'orange-600', icon: 'M' },
+              walletconnect: { name: 'WalletConnect', color: 'blue-500', icon: 'W' },
+              coinbase: { name: 'Coinbase Wallet', color: 'blue-600', icon: 'C' }
+            };
+            
+            const config = walletConfigs[walletType as keyof typeof walletConfigs] || walletConfigs.metamask;
+            
+            return (
+              <>
           {/* Left Side - Desktop Confirmation */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className={`w-16 h-16 bg-${config.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
               <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-orange-600 font-bold text-sm">M</span>
+                <span className={`text-${config.color} font-bold text-sm`}>{config.icon}</span>
               </div>
             </div>
-            <h2 className="text-xl font-semibold text-white mb-2">Confirming with MetaMask</h2>
+            <h2 className="text-xl font-semibold text-white mb-2">Confirming with {config.name}</h2>
           </div>
 
           {/* Transaction Details */}
@@ -377,7 +389,7 @@ export default function TransactionSigningModals({
                 </button>
                 <button 
                   onClick={handleApprove}
-                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg text-sm"
+                  className={`flex-1 bg-${config.color} text-white py-2 px-4 rounded-lg text-sm`}
                 >
                   Confirm
                 </button>
@@ -395,6 +407,9 @@ export default function TransactionSigningModals({
               </div>
             </div>
           </div>
+              </>
+            );
+          })()}
         </motion.div>
       )}
 
@@ -406,11 +421,25 @@ export default function TransactionSigningModals({
           exit={{ opacity: 0, y: -20 }}
           className="p-6 text-center"
         >
-          <div className="w-16 h-16 bg-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          {(() => {
+            const walletConfigs = {
+              metamask: { name: 'MetaMask', color: 'orange-600' },
+              walletconnect: { name: 'WalletConnect', color: 'blue-500' },
+              coinbase: { name: 'Coinbase Wallet', color: 'blue-600' }
+            };
+            
+            const config = walletConfigs[walletType as keyof typeof walletConfigs] || walletConfigs.metamask;
+            
+            return (
+              <>
+          <div className={`w-16 h-16 bg-${config.color} rounded-2xl flex items-center justify-center mx-auto mb-4`}>
             <Loader2 className="w-8 h-8 text-white animate-spin" />
           </div>
           <h2 className="text-xl font-semibold text-white mb-2">Processing Transaction...</h2>
           <p className="text-gray-400">Confirming transaction on the blockchain</p>
+              </>
+            );
+          })()}
         </motion.div>
       )}
 
@@ -422,6 +451,17 @@ export default function TransactionSigningModals({
           exit={{ opacity: 0, y: -20 }}
           className="p-6 text-center"
         >
+          {(() => {
+            const walletConfigs = {
+              metamask: { name: 'MetaMask', color: 'orange-600' },
+              walletconnect: { name: 'WalletConnect', color: 'blue-500' },
+              coinbase: { name: 'Coinbase Wallet', color: 'blue-600' }
+            };
+            
+            const config = walletConfigs[walletType as keyof typeof walletConfigs] || walletConfigs.metamask;
+            
+            return (
+              <>
           <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Check className="w-8 h-8 text-white" />
           </div>
@@ -432,6 +472,9 @@ export default function TransactionSigningModals({
           <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors mb-4">
             Explore
           </Button>
+              </>
+            );
+          })()}
           <div className="text-center">
             <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
               <span>Protected by</span>
@@ -723,6 +766,7 @@ export default function TransactionSigningModals({
         return renderAbstractFlow();
       case 'metamask':
       case 'walletconnect':
+      case 'coinbase':
         return renderMetaMaskFlow();
       case 'pulse':
         return renderPulseFlow();

@@ -623,18 +623,23 @@ export default function ChallengePage() {
         }}
         onWalletFlowStart={(walletType: string) => {
           console.log('🚀 Starting wallet flow for:', walletType);
-          const connectedWallet = getConnectedWallet(walletType);
           setSelectedWalletType(walletType);
           setShowJoinModal(false);
           
           // Route to appropriate flow based on wallet connection status
           setTimeout(() => {
-            if (connectedWallet) {
-              console.log('✅ Wallet connected, showing transaction flow');
+            if (walletType === 'card') {
+              console.log('💳 Card payment, showing transaction flow directly');
               setShowTransactionFlow(true);
             } else {
-              console.log('🔗 Wallet not connected, showing connection flow');
-              setShowWalletFlow(true);
+              const connectedWallet = getConnectedWallet(walletType);
+              if (connectedWallet) {
+                console.log('✅ Wallet connected, showing transaction flow');
+                setShowTransactionFlow(true);
+              } else {
+                console.log('🔗 Wallet not connected, showing connection flow');
+                setShowWalletFlow(true);
+              }
             }
           }, 100);
         }}

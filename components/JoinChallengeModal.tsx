@@ -74,20 +74,15 @@ export default function JoinChallengeModal({
   const paymentMethods = availableWallets;
 
   const handlePaymentMethodSelect = (methodId: string) => {
-    if (methodId === 'card') {
-      // Card payments skip wallet connection - go directly to transaction/payment
+    const connectedWallet = getConnectedWallet(methodId);
+    
+    if (connectedWallet || methodId === 'card') {
+      // Wallet is connected or it's a card payment - allow selection
       setSelectedPaymentMethod(methodId);
     } else {
-      const connectedWallet = getConnectedWallet(methodId);
-      
-      if (connectedWallet) {
-        // Wallet is connected - allow selection for transaction
-        setSelectedPaymentMethod(methodId);
-      } else {
-        // Wallet is not connected - trigger connection flow first
-        console.log('🔗 Wallet not connected, starting connection flow for:', methodId);
-        handleWalletConnection(methodId);
-      }
+      // Wallet is not connected - trigger connection flow first
+      console.log('🔗 Wallet not connected, starting connection flow for:', methodId);
+      handleWalletConnection(methodId);
     }
   };
 
@@ -98,7 +93,7 @@ export default function JoinChallengeModal({
     onWalletFlowStart(walletType);
   };
 
-  const canJoinChallenge = selectedPaymentMethod && acceptedTerms && getConnectedWallet(selectedPaymentMethod);
+  const canJoinChallenge = selectedPaymentMethod && acceptedTerms && (selectedPaymentMethod === 'card' || getConnectedWallet(selectedPaymentMethod));
 
   const handleJoinChallenge = () => {
     console.log('🚀 handleJoinChallenge called');
@@ -110,10 +105,13 @@ export default function JoinChallengeModal({
       return;
     }
     
-    const connectedWallet = getConnectedWallet(selectedPaymentMethod);
-    if (!connectedWallet) {
-      toast.error('Please connect your wallet first');
-      return;
+    // Skip wallet check for card payments
+    if (selectedPaymentMethod !== 'card') {
+      const connectedWallet = getConnectedWallet(selectedPaymentMethod);
+      if (!connectedWallet) {
+        toast.error('Please connect your wallet first');
+        return;
+      }
     }
     
     if (!acceptedTerms) {
@@ -259,11 +257,13 @@ export default function JoinChallengeModal({
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
-                            {connectedWallet ? (
+                            {connectedWallet || method.id === 'card' ? (
                               <>
-                                <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
-                                  Connected
-                                </Badge>
+                                {connectedWallet && (
+                                  <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
+                                    Connected
+                                  </Badge>
+                                )}
                                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                                   isSelected ? 'border-[#8E1EFE] bg-[#8E1EFE]' : 'border-gray-600'
                                 }`}>
