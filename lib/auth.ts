@@ -17,11 +17,13 @@ export interface User {
   signinMethod?: 'email' | 'sms' | 'metamask' | 'coinbase' | 'rainbow' | 'walletconnect' | 'phantom' | 'google' | 'discord';
 }
 
+type SigninMethod = 'email' | 'sms' | 'metamask' | 'coinbase' | 'rainbow' | 'walletconnect' | 'phantom' | 'google' | 'discord';
+
 interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
-  signinMethod: string | null;
-  login: (user: User, method?: string) => void;
+  signinMethod: SigninMethod | null;
+  login: (user: User, method?: SigninMethod) => void;
   logout: () => void;
 }
 
@@ -29,7 +31,7 @@ export const useAuth = create<AuthState>((set) => ({
   isAuthenticated: false,
   user: null,
   signinMethod: null,
-  login: (user, method = 'email') => set({ 
+  login: (user, method: SigninMethod = 'email') => set({ 
     isAuthenticated: true, 
     user: { ...user, signinMethod: method }, 
     signinMethod: method 

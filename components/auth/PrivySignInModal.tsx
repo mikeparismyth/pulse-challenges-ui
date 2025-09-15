@@ -7,6 +7,23 @@ import { Button } from '@/components/ui/button';
 import { useAuth, mockUser } from '@/lib/auth';
 import { toast } from 'sonner';
 
+// Map display names to signin method keys
+const mapToSigninMethod = (displayName: string): 'email' | 'sms' | 'metamask' | 'coinbase' | 'rainbow' | 'walletconnect' | 'phantom' | 'google' | 'discord' => {
+  const mapping: { [key: string]: 'email' | 'sms' | 'metamask' | 'coinbase' | 'rainbow' | 'walletconnect' | 'phantom' | 'google' | 'discord' } = {
+    'coinbase wallet': 'coinbase',
+    'metamask': 'metamask',
+    'rainbow': 'rainbow',
+    'gnosis': 'walletconnect', // Treat as walletconnect
+    'phantom': 'phantom',
+    'walletconnect': 'walletconnect',
+    'google': 'google',
+    'discord': 'discord'
+  };
+  
+  const key = displayName.toLowerCase();
+  return mapping[key] || 'metamask'; // Default fallback
+};
+
 interface PrivySignInModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -96,7 +113,7 @@ export default function PrivySignInModal({ isOpen, onClose, onSuccess }: PrivySi
     setTimeout(() => {
       setStep('success');
       setTimeout(() => {
-        login(mockUser, provider.toLowerCase());
+        login(mockUser, mapToSigninMethod(provider));
         onSuccess();
         toast.success(`Successfully signed in with ${provider}!`);
       }, 1500);
@@ -111,7 +128,7 @@ export default function PrivySignInModal({ isOpen, onClose, onSuccess }: PrivySi
     setTimeout(() => {
       setStep('success');
       setTimeout(() => {
-        login(mockUser, wallet.toLowerCase());
+        login(mockUser, mapToSigninMethod(wallet));
         onSuccess();
         toast.success(`Successfully connected ${wallet}!`);
       }, 1500);
